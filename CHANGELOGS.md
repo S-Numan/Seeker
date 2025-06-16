@@ -1,7 +1,7 @@
 SEEKER
 
 0.64
-  - Now supports version checker!
+  - Version checker now links to the new git repo. Thus, auto-update support is now present.
   - Edited bounties to avoid job_show_distance being "vague"
   - Fix staged bounties showing up when they shouldn't
   - Changed rarity of plague weapons and wings so random autofitted plague fleets actually use plague weapons.
