@@ -1,0 +1,52 @@
+{
+    "hullFrequency":{
+        "hulls":{
+            "SKR_butterfly":0.12,
+            "SKR_557":0.12,
+
+            "SKR_tumbleweed":0.3,
+            "SKR_bullhorn":0.12,
+
+            "SKR_cassowary":0.05,
+
+            "SKR_malet":0.15,
+            "SKR_adze":0.15,
+            "SKR_halligan":0.15,
+        },
+    },
+    "knownShips":{
+        "hulls":[
+            "SKR_butterfly",
+            "SKR_marksman",
+            "SKR_557",
+
+            "SKR_tumbleweed",
+            "SKR_bullhorn",
+
+            #"SKR_cassowary",#Commented out, as big scavenger fleets tend to overuse these as they are the scavenger's only capital, hullFrequency not mattering much.
+
+            "SKR_malet",
+            "SKR_adze",
+            "SKR_halligan",
+        ],
+    },
+    "knownFighters":{
+        "fighters":[
+            "SKR_erasmus_wing",
+        ],
+    },
+    "knownWeapons":{
+        "weapons":[
+            "SKR_minigun",
+            "SKR_ravager",
+
+            "SKR_kaleidoscope",
+            "SKR_gatlingLance",
+
+            "SKR_stepMissilesLauncher",
+            "SKR_stepMissilesRack",
+            "SKR_accelMissilesLauncher",
+            "SKR_accelMissileRack",
+        ],
+    },
+},

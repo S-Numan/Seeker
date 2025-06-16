@@ -1,0 +1,32 @@
+{
+    "hullFrequency":{
+        "hulls":{
+            "SKR_hedone":0.25,
+            "SKR_aethernium":0.25,
+            "SKR_butterfly":0.25,
+        },
+    },
+    "knownShips":{
+        "hulls":[
+            "SKR_hedone",
+            "SKR_aethernium",
+            "SKR_butterfly",
+        ],
+    },
+    "knownFighters":{
+        "fighters":[
+            "SKR_erasmus_wing",
+        ],
+    },
+    "knownWeapons":{
+        "weapons":[
+            "SKR_ravager",
+            "SKR_kaleidoscope",
+            "SKR_gatlingLance",
+            "SKR_stepMissilesLauncher",
+            "SKR_stepMissilesRack",
+            "SKR_accelMissilesLauncher",
+            "SKR_accelMissileRack",
+        ],
+    },
+},

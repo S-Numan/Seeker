@@ -1,0 +1,43 @@
+{
+    "displayName": "Standard",
+    "fluxCapacitors": 2,
+    "fluxVents": 30,
+    "goalVariant": true,
+    "hullId": "SKR_fresnel",
+    "hullMods": [
+        "targetingunit",
+        "advancedoptics",
+        "stabilizedshieldemitter"
+    ],
+    "permaMods": [],
+    "quality": 0.75,
+    "variantId": "SKR_fresnel_standard",
+    "weaponGroups": [
+        {
+            "autofire": false,
+            "mode": "LINKED",
+            "weapons": {
+                "WS0001": "SKR_fuscina",
+                "WS0002": "SKR_fuscina",
+                "WS0003": "SKR_fuscina"
+            }
+        },
+        {
+            "autofire": true,
+            "mode": "LINKED",
+            "weapons": {
+                "WS0004": "taclaser",
+                "WS0005": "taclaser",
+                "WS0006": "taclaser",
+                "WS0007": "taclaser",
+                "WS0008": "taclaser",
+                "WS0009": "pdlaser",
+                "WS0010": "pdburst"
+            }
+        }
+    ],
+    "wings": [
+        "lux_wing",
+        "lux_wing"
+    ]
+}

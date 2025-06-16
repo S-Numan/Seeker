@@ -1,0 +1,64 @@
+{
+    "displayName": "Starlight",
+    "fluxCapacitors": 26,
+    "fluxVents": 50,
+    "goalVariant": true,
+    "hullId": "SKR_dawn",
+    "hullMods": [
+        "advancedoptics",
+        "targetingunit",
+        "fluxbreakers",
+        "stabilizedshieldemitter"
+    ],
+    "permaMods": [],
+    "variantId": "SKR_dawn_Starlight",
+    "weaponGroups": [
+        {
+            "autofire": true,
+            "mode": "LINKED",
+            "weapons": {
+                "WS0001": "hil",
+                "WS0002": "hil"
+            }
+        },
+        {
+            "autofire": false,
+            "mode": "ALTERNATING",
+            "weapons": {
+                "BUILTIN_L": "SKR_sunburst",
+                "BUILTIN_R": "SKR_sunburst"
+            }
+        },
+        {
+            "autofire": true,
+            "mode": "LINKED",
+            "weapons": {
+                "WS0003": "taclaser",
+                "WS0004": "ionbeam",
+                "WS0005": "ionbeam",
+                "WS0008": "gravitonbeam",
+                "WS0009": "gravitonbeam",
+                "WS0010": "taclaser",
+                "WS0011": "taclaser"
+            }
+        },
+        {
+            "autofire": true,
+            "mode": "LINKED",
+            "weapons": {
+                "WS0006": "heavyburst",
+                "WS0007": "heavyburst"
+            }
+        },
+        {
+            "autofire": true,
+            "mode": "LINKED",
+            "weapons": {
+                "WS0012": "pdlaser",
+                "WS0013": "pdlaser",
+                "WS0014": "pdlaser",
+                "WS0015": "pdlaser"
+            }
+        }
+    ]
+}
