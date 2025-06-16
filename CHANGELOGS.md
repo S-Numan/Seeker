@@ -1,5 +1,12 @@
 SEEKER
 
+0.64
+  - Now supports version checker!
+  - Edited bounties to avoid job_show_distance being "vague"
+  - Fix staged bounties showing up when they shouldn't
+  - Changed rarity of plague weapons and wings so random autofitted plague fleets actually use plague weapons.
+  - Roughly aligned the siegfried's flux torpedoes
+
 0.63
   - Edited the terrible (tactical laser + integrated point defense) combo on several ships. Either by removing the IPDA, or replacing the tach lasers with LRPD.
   - Added no_dealer to relevant hulls: All Exotics, Titanic, Blitzkrieg, and Demeter.

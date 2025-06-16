@@ -1,14 +1,14 @@
 {
-    "masterVersionFile":"https://raw.githubusercontent.com/MnHebi/SEEKER_UC/main/SEEKER.version",
+    "masterVersionFile":"https://raw.githubusercontent.com/S-Numan/Seeker/master/SEEKER.version",
     "modName":"Seeker",
-    "modThreadId":"19414",
-    "modNexusId":"50",
+    #"modThreadId":"19414",
+    #"modNexusId":"50",
     "modVersion":
     {
         "major":0,
         "minor":6,
-        "patch":"3"
+        "patch":"4"
     },
-	"directDownloadURL": "https://raw.githubusercontent.com/MnHebi/SEEKER_UC/0.57M/CHANGELOG.txt",
-	"changelogURL": "https://raw.githubusercontent.com/MnHebi/Torchships/main/CHANGELOGS.txt"	
+	"directDownloadURL": "https://github.com/S-Numan/Seeker/releases/latest/download/SEEKER.zip",
+	"changelogURL": "https://raw.githubusercontent.com/S-Numan/Seeker/master/CHANGELOGS.md"
 }
