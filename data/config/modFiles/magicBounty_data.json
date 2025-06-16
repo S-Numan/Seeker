@@ -91,39 +91,39 @@
 		"existing_target_memkey":"$SKR_safeguard_boss",
 	},
 
-	"SKR_safeguard_alt":{
-
-		"trigger_marketFaction_any": ["hegemony", "persean"],
-		"trigger_marketFaction_alliedWith": true,
-		"trigger_min_fleet_size": 75,
-		"trigger_min_days_elapsed": 180,
-
-		"trigger_memKeys_any": {
-			#boss is alive
-			"$SKR_safeguard_boss":true,
-		},
-		"trigger_memKeys_none": {
-			#alternate bounty is not active
-			"$SKR_safeguard":false,
-		},
-
-
-		"job_name": "Opening new Journalist positions",
-		"job_description": "The News Group Newscasts Corp. is looking for new contributors for its premiere publication: ==The Star==.\n\n To bolster our ever growing team of highly professional journalists while maintaining the highest standard of practice, the recruitment process with start by a bounty. If you have the requisite curiosity to become an effective investigator, you must already have heard of the stories about the ==$system system==. However our keen readership will not stand for mere rumor peddling, our articles must have substance and bring forth evidences to back those.\n\nFor this reason The Star is offering a $reward credits bounty for tangible proof of an ==\"abnormal derelict drone\"== in that system. Then ten applicants will be selected for further evaluation and potentially a permanent seat in The Star's writing team.\n\n(Participating in that bounty does not make you eligible for The Sun's insurance coverage. No liability shall be retained against the publication or its parent corporation for any harm, financial, psychological, physical or otherwise, that may result in engaging in the recruitment process.)",
-		"job_intel_success": "It took quite some time to get a reply after sending the recording of the battle through the required channel. While the bounty reward was credited to your account, the recruiter asked if you would like to join their visual effect team. Their team had been incapable to find a flaw in the fabrication you had sent, so the job would come with significant benefits as well as a lengthy ==non disclosure agreement== to sign.",
-		"job_intel_failure": "You accomplished the impossible and captured the drone, legendary tales will be told about this feat! The AI themselves will tremble in fear of your mighty power...\n\nAnd yet deep down, you understand what a travesty this is.",
-		"job_intel_expired": "The Star has retracted their bounty. The publication is currently bessieged by multiple class action lawsuits from widows and grieving parent who lost their loved ones in the $system system.",
-		"job_deadline": 3600,
-		"job_credit_reward": 5000,
-		"job_type":"destruction",
-		"job_show_type": false,
-		"job_show_captain": false,
-		"job_show_fleet": "flagshipText",
-		"job_show_distance": "vanilla",
-		"job_difficultyDescription": "What threat can a weird Derelict drone pose to you fleet anyway, you ponder.",
-
-		"existing_target_memkey":"$SKR_safeguard_boss",
-	},
+	#"SKR_safeguard_alt":{
+    #
+	#	"trigger_marketFaction_any": ["hegemony", "persean"],
+	#	"trigger_marketFaction_alliedWith": true,
+	#	"trigger_min_fleet_size": 75,
+	#	"trigger_min_days_elapsed": 180,
+    #
+	#	"trigger_memKeys_any": {
+	#		#boss is alive
+	#		"$SKR_safeguard_boss":true,
+	#	},
+	#	"trigger_memKeys_none": {
+	#		#alternate bounty is not active
+	#		"$SKR_safeguard":false,
+	#	},
+    #
+    #
+	#	"job_name": "Opening new Journalist positions",
+	#	"job_description": "The News Group Newscasts Corp. is looking for new contributors for its premiere publication: ==The Star==.\n\n To bolster our ever growing team of highly professional journalists while maintaining the highest standard of practice, the recruitment process with start by a bounty. If you have the requisite curiosity to become an effective investigator, you must already have heard of the stories about the ==$system system==. However our keen readership will not stand for mere rumor peddling, our articles must have substance and bring forth evidences to back those.\n\nFor this reason The Star is offering a $reward credits bounty for tangible proof of an ==\"abnormal derelict drone\"== in that system. Then ten applicants will be selected for further evaluation and potentially a permanent seat in The Star's writing team.\n\n(Participating in that bounty does not make you eligible for The Sun's insurance coverage. No liability shall be retained against the publication or its parent corporation for any harm, financial, psychological, physical or otherwise, that may result in engaging in the recruitment process.)",
+	#	"job_intel_success": "It took quite some time to get a reply after sending the recording of the battle through the required channel. While the bounty reward was credited to your account, the recruiter asked if you would like to join their visual effect team. Their team had been incapable to find a flaw in the fabrication you had sent, so the job would come with significant benefits as well as a lengthy ==non disclosure agreement== to sign.",
+	#	"job_intel_failure": "You accomplished the impossible and captured the drone, legendary tales will be told about this feat! The AI themselves will tremble in fear of your mighty power...\n\nAnd yet deep down, you understand what a travesty this is.",
+	#	"job_intel_expired": "The Star has retracted their bounty. The publication is currently bessieged by multiple class action lawsuits from widows and grieving parent who lost their loved ones in the $system system.",
+	#	"job_deadline": 3600,
+	#	"job_credit_reward": 5000,
+	#	"job_type":"destruction",
+	#	"job_show_type": false,
+	#	"job_show_captain": false,
+	#	"job_show_fleet": "flagshipText",
+	#	"job_show_distance": "vanilla",
+	#	"job_difficultyDescription": "What threat can a weird Derelict drone pose to you fleet anyway, you ponder.",
+    #
+	#	"existing_target_memkey":"$SKR_safeguard_boss",
+	#},
 
 
 	"SKR_rampage":{
@@ -170,49 +170,49 @@
 		"existing_target_memkey":"$SKR_rampage_boss",
 	},
 
-	"SKR_rampage_alt":{
-
-        "trigger_marketFaction_any": ["independent"],
-        "trigger_marketFaction_alliedWith": true,
-        "trigger_min_fleet_size": 100,
-        "trigger_min_days_elapsed": 360,
-
-		"trigger_memKeys_any": {
-			# previous stage has been started or concluded
-			"$SKR_safeguard":false,
-			"$SKR_safeguard_alt":false,
-			"$SKR_safeguard_succeeded":true,
-			"$SKR_safeguard_alt_succeeded":true,
-			"$SKR_safeguard_failed":true,
-			"$SKR_safeguard_alt_failed":true,
-			"$SKR_safeguard_expired":true,
-			"$SKR_safeguard_alt_expired":true,
-		},
-        "trigger_memKeys_all": {
-			# boss is alive
-			"$SKR_rampage_boss":true,
-		},
-        "trigger_memKeys_none": {
-			# alternative bounty is not active
-			"$SKR_rampage":false,
-		},
-
-		"job_name": "Eliminate an unknown threat",
-        "job_description": "A high-credentials job offer catches your attention on a restricted section of the board:\n\nA merc company is looking to hire an independent actor to tie loose ends they cannot themselves by fear of ruining their reputation. From the cliff notes you gather that a prisoner convoy they were escorting was attacked on their way to a remote scavenger labor camp. If it was revealed that an independent government is using slave labor to get an economic edge over their neighbors, or that the merc force lost an entire convoy, it would be an embarrassment for both parties.\n\nYou are to ==find and destroy the aggressor== to prevent them from attacking another transport but also to ensure none of the highly dangerous criminals were liberated. Tactical data is non-existent besides the probable location of the attack: the ==$system system==.",
-        "job_intel_success": "In an attempt to keep your story simple you only send a summary report of the battle to your client. They do accept your word given your reputation and the reward is properly transfered to your account. In the meantime, the mysterious wreck offers few clues about the nature or intentions of this plague laden machine... Thing... Being?",
-        "job_intel_failure": "You stare at the hulk while your crew works miracles to bring it back online. Nobody expected this to be even possible but your engineering team had one very special ace up their sleeve.",
-        "job_intel_expired": "Trouble is brewing for both the mercs and the independent governorship. Their scheme was uncovered, political tensions are rising, and they abruptly cut their job offer before the news that dangerous criminals may have escaped captivity is revealed. The mysterious attacker is still roaming free though.",
-		"job_deadline": 3600,
-        "job_credit_reward": 28000,
-        "job_type":"destruction",
-        "job_show_type": false,
-        "job_show_captain": false,
-        "job_show_fleet": "none",
-        "job_show_distance": "vanilla",
-        "job_difficultyDescription": "You are going blind against an opponent that took out a small cruiser-sized task force. The Merc commander assures you that their captains were highly competent and that the enemy cannot have won a battle against them unscathed.",
-
-		"existing_target_memkey":"$SKR_rampage_boss",
-	},
+	#"SKR_rampage_alt":{
+    #
+    #    "trigger_marketFaction_any": ["independent"],
+    #    "trigger_marketFaction_alliedWith": true,
+    #    "trigger_min_fleet_size": 100,
+    #    "trigger_min_days_elapsed": 360,
+    #
+	#	"trigger_memKeys_any": {
+	#		# previous stage has been started or concluded
+	#		"$SKR_safeguard":false,
+	#		"$SKR_safeguard_alt":false,
+	#		"$SKR_safeguard_succeeded":true,
+	#		"$SKR_safeguard_alt_succeeded":true,
+	#		"$SKR_safeguard_failed":true,
+	#		"$SKR_safeguard_alt_failed":true,
+	#		"$SKR_safeguard_expired":true,
+	#		"$SKR_safeguard_alt_expired":true,
+	#	},
+    #    "trigger_memKeys_all": {
+	#		# boss is alive
+	#		"$SKR_rampage_boss":true,
+	#	},
+    #    "trigger_memKeys_none": {
+	#		# alternative bounty is not active
+	#		"$SKR_rampage":false,
+	#	},
+    #
+	#	"job_name": "Eliminate an unknown threat",
+    #    "job_description": "A high-credentials job offer catches your attention on a restricted section of the board:\n\nA merc company is looking to hire an independent actor to tie loose ends they cannot themselves by fear of ruining their reputation. From the cliff notes you gather that a prisoner convoy they were escorting was attacked on their way to a remote scavenger labor camp. If it was revealed that an independent government is using slave labor to get an economic edge over their neighbors, or that the merc force lost an entire convoy, it would be an embarrassment for both parties.\n\nYou are to ==find and destroy the aggressor== to prevent them from attacking another transport but also to ensure none of the highly dangerous criminals were liberated. Tactical data is non-existent besides the probable location of the attack: the ==$system system==.",
+    #    "job_intel_success": "In an attempt to keep your story simple you only send a summary report of the battle to your client. They do accept your word given your reputation and the reward is properly transfered to your account. In the meantime, the mysterious wreck offers few clues about the nature or intentions of this plague laden machine... Thing... Being?",
+    #    "job_intel_failure": "You stare at the hulk while your crew works miracles to bring it back online. Nobody expected this to be even possible but your engineering team had one very special ace up their sleeve.",
+    #    "job_intel_expired": "Trouble is brewing for both the mercs and the independent governorship. Their scheme was uncovered, political tensions are rising, and they abruptly cut their job offer before the news that dangerous criminals may have escaped captivity is revealed. The mysterious attacker is still roaming free though.",
+	#	"job_deadline": 3600,
+    #    "job_credit_reward": 28000,
+    #    "job_type":"destruction",
+    #    "job_show_type": false,
+    #    "job_show_captain": false,
+    #    "job_show_fleet": "none",
+    #    "job_show_distance": "vanilla",
+    #    "job_difficultyDescription": "You are going blind against an opponent that took out a small cruiser-sized task force. The Merc commander assures you that their captains were highly competent and that the enemy cannot have won a battle against them unscathed.",
+    #
+	#	"existing_target_memkey":"$SKR_rampage_boss",
+	#},
 
 	"SKR_whitedwarf":{
 
@@ -260,50 +260,51 @@
 	},
 
 
-	"SKR_whitedwarf_alt":{
+	#"SKR_whitedwarf_alt":{
+    #
+    #    "trigger_marketFaction_any": ["tritachyon"],
+    #    "trigger_marketFaction_alliedWith": true,
+    #    "trigger_min_fleet_size": 125,
+    #    "trigger_min_days_elapsed": 720,
+    #
+	#	"trigger_memKeys_any": {
+	#		# previous stage has been started or concluded
+	#		"$SKR_rampage":false,
+	#		"$SKR_rampage_alt":false,
+	#		"$SKR_rampage_succeeded":true,
+	#		"$SKR_rampage_alt_succeeded":true,
+	#		"$SKR_rampage_failed":true,
+	#		"$SKR_rampage_alt_failed":true,
+	#		"$SKR_rampage_expired":true,
+	#		"$SKR_rampage_alt_expired":true,
+	#	},
+    #    "trigger_memKeys_all": {
+	#		# boss is alive
+	#		"$SKR_whitedwarf_boss":true,
+	#	},
+    #    "trigger_memKeys_none": {
+	#		#alternate bounty is not active
+	#		"$SKR_whitedwarf":false,
+	#	},
+    #
+	#	"job_name": "Scan a Core from a strange Remnant",
+    #    "job_description": "A rather laconic note from a Tri-Tachyon related lab offers a bounty for the direct ==scan of an AI core== extracted from a specific Remnant ship. There are few details but it seems that while digging into pre-war telemetry from their AI fleets, someone discovered evidences of indepedent behavior from one of their larger units.\n\nGiven the lack of legal jargon and simple contract terms, you get the impression this is not exactly a sanctioned contract but rather an employee going on a limb to catch something big before everyone else. The ==$reward credits== reward is quite meager given the risks involved, and the promised share of the ==hypothetical returns== is not exactly comforting either.",
+    #    "job_intel_success": "You have now faced several ships spreading this odd plague of nano-machines, yet you are not any closer to understand what they are, or what is their purpose. Your engineering team is almost equally split between those spooked by the threat of AI contamination, and those excited by the improved hardware found in the wreck.\n\nFortunately, once the source has been disabled, only the large concentrations of nano-machines found in weapons and drones are still active. The mist of small clumps your fleet was fighting in turned into space dust, limiting the risks of contamination.",
+    #    "job_intel_failure": "No Remnant ship can resist your computer hacking skills, not even those powered by a strange super-intelligent nano-machine goo. You will break their will and shove in an enslaved AI core to control their body, incompatible ports be damned!",
+    #    "job_intel_expired": "You get a notice that the contract has been rescinded. Actually your intel team dicovered that the entire enterprise it came from was liquidated by their parent company. The notice included a tracking program that was fortunately quarantined before it could infect your ship's system.",
+    #
+	#	"job_deadline": 3600,
+    #    "job_credit_reward": 10000,
+    #    "job_type":"destruction",
+    #    "job_show_type": false,
+    #    "job_show_captain": false,
+    #    "job_show_fleet": "none",
+    #    "job_show_distance": "vanilla",
+    #    "job_difficultyDescription": "Nobody would take this contract just for the reward. At best you can hope for valuable salvage but the risks involved in visiting a Remnant stronghold are considerable.",
+    #
+	#	"existing_target_memkey":"$SKR_whitedwarf_boss",
+	#},
 
-        "trigger_marketFaction_any": ["tritachyon"],
-        "trigger_marketFaction_alliedWith": true,
-        "trigger_min_fleet_size": 125,
-        "trigger_min_days_elapsed": 720,
-
-		"trigger_memKeys_any": {
-			# previous stage has been started or concluded
-			"$SKR_rampage":false,
-			"$SKR_rampage_alt":false,
-			"$SKR_rampage_succeeded":true,
-			"$SKR_rampage_alt_succeeded":true,
-			"$SKR_rampage_failed":true,
-			"$SKR_rampage_alt_failed":true,
-			"$SKR_rampage_expired":true,
-			"$SKR_rampage_alt_expired":true,
-		},
-        "trigger_memKeys_all": {
-			# boss is alive
-			"$SKR_whitedwarf_boss":true,
-		},
-        "trigger_memKeys_none": {
-			#alternate bounty is not active
-			"$SKR_whitedwarf":false,
-		},
-
-		"job_name": "Scan a Core from a strange Remnant",
-        "job_description": "A rather laconic note from a Tri-Tachyon related lab offers a bounty for the direct ==scan of an AI core== extracted from a specific Remnant ship. There are few details but it seems that while digging into pre-war telemetry from their AI fleets, someone discovered evidences of indepedent behavior from one of their larger units.\n\nGiven the lack of legal jargon and simple contract terms, you get the impression this is not exactly a sanctioned contract but rather an employee going on a limb to catch something big before everyone else. The ==$reward credits== reward is quite meager given the risks involved, and the promised share of the ==hypothetical returns== is not exactly comforting either.",
-        "job_intel_success": "You have now faced several ships spreading this odd plague of nano-machines, yet you are not any closer to understand what they are, or what is their purpose. Your engineering team is almost equally split between those spooked by the threat of AI contamination, and those excited by the improved hardware found in the wreck.\n\nFortunately, once the source has been disabled, only the large concentrations of nano-machines found in weapons and drones are still active. The mist of small clumps your fleet was fighting in turned into space dust, limiting the risks of contamination.",
-        "job_intel_failure": "No Remnant ship can resist your computer hacking skills, not even those powered by a strange super-intelligent nano-machine goo. You will break their will and shove in an enslaved AI core to control their body, incompatible ports be damned!",
-        "job_intel_expired": "You get a notice that the contract has been rescinded. Actually your intel team dicovered that the entire enterprise it came from was liquidated by their parent company. The notice included a tracking program that was fortunately quarantined before it could infect your ship's system.",
-
-		"job_deadline": 3600,
-        "job_credit_reward": 10000,
-        "job_type":"destruction",
-        "job_show_type": false,
-        "job_show_captain": false,
-        "job_show_fleet": "none",
-        "job_show_distance": "vanilla",
-        "job_difficultyDescription": "Nobody would take this contract just for the reward. At best you can hope for valuable salvage but the risks involved in visiting a Remnant stronghold are considerable.",
-
-		"existing_target_memkey":"$SKR_whitedwarf_boss",
-	},
 	"SKR_cataclysm":{
 
         "trigger_min_fleet_size": 150,
