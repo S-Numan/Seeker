@@ -87,52 +87,15 @@ public class SKR_modPlugin extends BaseModPlugin {
     @Override
     public void onNewGame() {
         //save mod version for save patching
-        Global.getSector().getMemoryWithoutUpdate().set("$seeker_version", 0.525f);
+        setCurrentSeekerVersion();
     }
     
     @Override
     public void onGameLoad(boolean newGame) {
         //SAVE PATCHING CODE
-        
-        //0.52 RC3
-        //fixing missing global memkeys for boss bounties
-        /*if(Global.getSector().getMemoryWithoutUpdate().getFloat("$seeker_version")<0.523f){
-            Global.getSector().getMemoryWithoutUpdate().set("$seeker_version", 0.523f);
 
-            MemoryAPI globalMemory = Global.getSector().getMemoryWithoutUpdate();
-
-            for (StarSystemAPI system : Global.getSector().getStarSystems()) {
-                if (!system.hasTag(THEME_PLAGUEBEARER)) continue;
-
-                for (CampaignFleetAPI fleet : system.getFleets()) {
-                    FleetMemberAPI flagship = fleet.getFlagship();
-                    if (flagship == null) continue;
-
-                    String name = flagship.getShipName();
-                    MemoryAPI fleetMemory = fleet.getMemoryWithoutUpdate();
-
-                    if (txt("plague_A_boss").equals(name)) {
-                        globalMemory.set("$SKR_safeguard_boss", true);
-                        fleetMemory.set("$SKR_safeguard_boss", true);
-                    } else if (txt("plague_B_boss").equals(name)) {
-                        globalMemory.set("$SKR_rampage_boss", true);
-                        fleetMemory.set("$SKR_rampage_boss", true);
-                    } else if (txt("plague_C_boss").equals(name)) {
-                        globalMemory.set("$SKR_whitedwarf_boss", true);
-                        fleetMemory.set("$SKR_whitedwarf_boss", true);
-                    } else if (txt("plague_D_boss").equals(name)) {
-                        globalMemory.set("$SKR_cataclysm_boss", true);
-                        fleetMemory.set("$SKR_cataclysm_boss", true);
-                    } else if (txt("nova_boss").equals(name)) {
-                        globalMemory.set("$SKR_nova", false);
-                        fleetMemory.set("$SKR_nova", false);
-                    }
-                }
-            }
-        }*/
-
-        if (Global.getSector().getMemoryWithoutUpdate().getFloat("$seeker_version") < 0.525f) {
-            Global.getSector().getMemoryWithoutUpdate().set("$seeker_version", 0.525f);
+        if (!Global.getSector().getMemoryWithoutUpdate().contains("$seeker_version")) {
+            setCurrentSeekerVersion();
             boolean generated = false;
             for (StarSystemAPI system : Global.getSector().getStarSystems()) {
                 if (system.hasTag(THEME_PLAGUEBEARER)) {
@@ -145,6 +108,17 @@ public class SKR_modPlugin extends BaseModPlugin {
                 SKR_seekerGen.addExplorationContent();
             }
         }
+
+        /*if(Global.getSector().getMemoryWithoutUpdate().getFloat("$seeker_version")<0.64f) {
+            setCurrentSeekerVersion();
+            for (StarSystemAPI system : Global.getSector().getStarSystems()) {
+                if (!system.hasTag(THEME_PLAGUEBEARER)) continue;
+
+                for (CampaignFleetAPI fleet : system.getFleets()) {
+
+                }
+            }
+        }*/
     }
     
     @Override
@@ -153,5 +127,10 @@ public class SKR_modPlugin extends BaseModPlugin {
         SKR_seekerGen.initFactionRelationships(Global.getSector());
              
         SKR_seekerGen.addExplorationContent();
+    }
+
+
+    private void setCurrentSeekerVersion() {
+        Global.getSector().getMemoryWithoutUpdate().set("$seeker_version", 0.64f);
     }
 }
