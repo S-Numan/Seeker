@@ -7,7 +7,7 @@
     {
         "major":0,
         "minor":6,
-        "patch":"5"
+        "patch":"5-1"
     },
 	"directDownloadURL": "https://github.com/S-Numan/Seeker/releases/latest/download/SEEKER.zip",
 	"changelogURL": "https://raw.githubusercontent.com/S-Numan/Seeker/master/CHANGELOGS.md"
