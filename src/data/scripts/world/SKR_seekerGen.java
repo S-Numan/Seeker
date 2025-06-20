@@ -233,6 +233,9 @@ public class SKR_seekerGen implements SectorGeneratorPlugin {
             nova.getMemoryWithoutUpdate().set(MemFlags.FLEET_FIGHT_TO_THE_LAST, true);
             Global.getSector().getMemoryWithoutUpdate().set("$SKR_nova", false);
             nova.getMemoryWithoutUpdate().set("$SKR_nova", false);
+
+            nova.getMemoryWithoutUpdate().set(MemFlags.FLEET_IGNORES_OTHER_FLEETS, true);
+            nova.getMemoryWithoutUpdate().set(MemFlags.FLEET_DO_NOT_IGNORE_PLAYER, true);
 //            selected.getStarSystem().getTags().add("theme_plaguebearers");
         }
     }
@@ -653,6 +656,8 @@ public class SKR_seekerGen implements SectorGeneratorPlugin {
                     .setIsImportant(false)
                     .setTransponderOn(true)
 					.create();
+
+            hackedFleet.getMemoryWithoutUpdate().set("$clearCommands_no_remove", true);
         }
                 
         
@@ -832,13 +837,14 @@ public class SKR_seekerGen implements SectorGeneratorPlugin {
                     .setAssignmentTarget(cataclysm)
 					.create();
             posse.getMemoryWithoutUpdate().set(MemFlags.FLEET_FIGHT_TO_THE_LAST, true);
+            posse.getMemoryWithoutUpdate().set("$clearCommands_no_remove", true);
         }
         
         targetPlagueD.getStarSystem().getTags().add(Tags.THEME_UNSAFE);
         targetPlagueD.getStarSystem().getTags().add(SKR_ids.THEME_PLAGUEBEARER);
-                
+
     }
-    
+
     ////////////////////
     //                //
     //    DEMETER     //
@@ -932,6 +938,7 @@ public class SKR_seekerGen implements SectorGeneratorPlugin {
         demeter.getFlagship().getVariant().addTag(Tags.VARIANT_ALWAYS_RECOVERABLE);
         Global.getSector().getMemoryWithoutUpdate().set("$SKR_demeter", false);
         demeter.getMemoryWithoutUpdate().set("$SKR_demeter", false);
+        demeter.getMemoryWithoutUpdate().set("$clearCommands_no_remove", true);
     }
     
     ////////////////////

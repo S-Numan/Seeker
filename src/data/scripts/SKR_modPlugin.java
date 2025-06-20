@@ -95,7 +95,7 @@ public class SKR_modPlugin extends BaseModPlugin {
         //SAVE PATCHING CODE
 
         if (!Global.getSector().getMemoryWithoutUpdate().contains("$seeker_version")) {
-            setCurrentSeekerVersion();
+
             boolean generated = false;
             for (StarSystemAPI system : Global.getSector().getStarSystems()) {
                 if (system.hasTag(THEME_PLAGUEBEARER)) {
@@ -109,8 +109,8 @@ public class SKR_modPlugin extends BaseModPlugin {
             }
         }
 
-        /*if(Global.getSector().getMemoryWithoutUpdate().getFloat("$seeker_version")<0.64f) {
-            setCurrentSeekerVersion();
+        /*if(Global.getSector().getMemoryWithoutUpdate().getFloat("$seeker_version")<0.65f) {
+
             for (StarSystemAPI system : Global.getSector().getStarSystems()) {
                 if (!system.hasTag(THEME_PLAGUEBEARER)) continue;
 
@@ -119,6 +119,8 @@ public class SKR_modPlugin extends BaseModPlugin {
                 }
             }
         }*/
+
+        setCurrentSeekerVersion();
     }
     
     @Override
@@ -131,6 +133,6 @@ public class SKR_modPlugin extends BaseModPlugin {
 
 
     private void setCurrentSeekerVersion() {
-        Global.getSector().getMemoryWithoutUpdate().set("$seeker_version", 0.64f);
+        Global.getSector().getMemoryWithoutUpdate().set("$seeker_version", 0.65f);
     }
 }

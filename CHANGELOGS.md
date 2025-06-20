@@ -1,5 +1,8 @@
 SEEKER
 
+0.65
+  - The ClearCommands mod no longer removes fleets spawned at the start of the game. (Requires a new game to take effect)
+
 0.64
   - Version checker now links to the new git repo. Thus, auto-update support is now present.
   - Edited bounties to avoid job_show_distance being "vague"
