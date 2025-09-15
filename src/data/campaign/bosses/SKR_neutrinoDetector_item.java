@@ -7,6 +7,7 @@ import com.fs.starfarer.api.campaign.PersistentUIDataAPI.AbilitySlotAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
 import com.fs.starfarer.api.campaign.impl.items.BaseSpecialItemPlugin;
+import com.fs.starfarer.api.impl.campaign.ids.Abilities;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import data.campaign.ids.SKR_ids;
@@ -85,8 +86,11 @@ public class SKR_neutrinoDetector_item extends BaseSpecialItemPlugin{
                 
                 boolean slotted = false;
                 for (AbilitySlotAPI slot : Global.getSector().getUIData().getAbilitySlotsAPI().getCurrSlotsCopy()){
-                    if (slot.getAbilityId() != null && slot.getAbilityId().equals("gravitic_scan")){
-                        slot.setAbilityId(SKR_ids.ABILITY_NEUTRINO_DETECTOR);
+                    if (slot.getAbilityId() != null && slot.getAbilityId().equals(Abilities.GRAVITIC_SCAN)){
+						if(slot.getInHyperAbilityId() == null || slot.getInHyperAbilityId().equals(Abilities.GRAVITIC_SCAN)) {
+							slot.setAbilityId(SKR_ids.ABILITY_NEUTRINO_DETECTOR);
+							slot.setInHyperAbilityId(Abilities.GRAVITIC_SCAN);
+						}
                         slotted=true;
                         break;
                     }
