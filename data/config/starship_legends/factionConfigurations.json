@@ -24,7 +24,7 @@
 		#	that ship to be a derelict. The power (FP) of the ship should not come in to
 		#	consideration, as that is adjustable by users in the options file
 		"derelictFrequency":{
-                    "SKR_zealoth":0.1,
+                    "SKR_zealot":0.1,
                     "SKR_cultist":0.1,
 		},
 		
@@ -145,9 +145,7 @@
             "SKR_onyx":0.1f,
             "SKR_voulge":0.25f,
             "SKR_gawon":0.1f,
-            "SKR_guardian":0.1f,
-            "SKR_guardian_atc":0.1f,
-            "SKR_guardian_broadside":0.1f,
+            "SKR_siegfried":0.1f,
         },
     },
 }

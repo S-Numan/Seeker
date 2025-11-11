@@ -51,7 +51,7 @@
                         "spreadSpeed":200,
                         "spreadSpeedRange":200,
                         "projectileRange":100,
-                        "projectileSpec":"SKR_sunburst_shot",
+                        "projectileSpec":"SKR_sunburst_shotB",
                         "smokeSpec":{
                             "particleSizeMin":20.0,
                             "particleSizeRange":20.0,
@@ -64,5 +64,5 @@
                             "blowbackSpread":180,
                             "particleColor":[255,75,165,200]
                         }
-                        }				    
+                }
 }

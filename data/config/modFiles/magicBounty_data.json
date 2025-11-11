@@ -134,9 +134,9 @@
         "trigger_min_days_elapsed": 360,
 
 		"trigger_memKeys_any": {
-			# previous stage has been started or concluded
-			"$SKR_safeguard":false,
-			"$SKR_safeguard_alt":false,
+			# previous stage has been concluded
+			#"$SKR_safeguard":false,
+			#"$SKR_safeguard_alt":false,
 			"$SKR_safeguard_succeeded":true,
 			"$SKR_safeguard_alt_succeeded":true,
 			"$SKR_safeguard_failed":true,
@@ -222,9 +222,9 @@
         "trigger_min_days_elapsed": 720,
 
 		"trigger_memKeys_any": {
-			# previous stage has been started or concluded
-			"$SKR_rampage":false,
-			"$SKR_rampage_alt":false,
+			# previous stage has been concluded
+			#"$SKR_rampage":false,
+			#"$SKR_rampage_alt":false,
 			"$SKR_rampage_succeeded":true,
 			"$SKR_rampage_alt_succeeded":true,
 			"$SKR_rampage_failed":true,
@@ -311,9 +311,9 @@
         "trigger_min_days_elapsed": 1440,
 
 		"trigger_memKeys_any": {
-			# previous stage has been started or concluded
-			"$SKR_whitedwarf":false,
-			"$SKR_whitedwarf_alt":false,
+			# previous stage has been concluded
+			#"$SKR_whitedwarf":false,
+			#"$SKR_whitedwarf_alt":false,
 			"$SKR_whitedwarf_succeeded":true,
 			"$SKR_whitedwarf_alt_succeeded":true,
 			"$SKR_whitedwarf_failed":true,
