@@ -8,8 +8,8 @@
     "baseValueMult":1,
     "ordnancePoints":300,
     "restoreToBaseHull":false,
-    "addHints":[],
-    "tech":"ANTIC_TECH",
+    "addHints":["HIDE_IN_CODEX"],
+    "tech":"Low Tech",
     "removeWeaponSlots":[
         #"FIRECANE1",
         #"FIRECANE2"

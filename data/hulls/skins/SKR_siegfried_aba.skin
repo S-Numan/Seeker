@@ -7,8 +7,8 @@
 
     "baseValueMult":1,
     "restoreToBaseHull":false,
-    "addHints":[],
-    "tech":"ANTIC_TECH",
+    "addHints":["HIDE_IN_CODEX"],
+    "tech":"Low Tech",
     "removeWeaponSlots":[
         "LARGE2",
         "LARGE3",
