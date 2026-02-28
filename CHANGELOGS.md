@@ -2,6 +2,9 @@ SEEKER
 0.66
   - On learning the Enhanced Neutrino Detector ability for the first time; when the base game detector slot is replaced with it, the hyperspace slot becomes the base game detector to preserve detector functionality in hyperspace.
   - Boss bounties only show up if the previous stage has been concluded, rather than showing up right after accepting the bounty.
+  - Poison Ivy and Red Hand are now tagged with no_dealer
+  - Hide the Siegfried's alternate ships in the codex to reduce codex bloat. Also change their tech to "Low Tech" from "ANTIC_TECH" for consistency.
+  - Fix some typo's that were causing warnings to be printed to the log.
   
 0.65
   - The ClearCommands mod no longer removes fleets spawned at the start of the game. (Requires a new game to take effect)
