@@ -1,5 +1,6 @@
 SEEKER
 0.66
+  - Recompiled with Nexerelin to fix some issues, for example, the "A Knight's Tale" Voulge custom start will no longer crash.
   - On learning the Enhanced Neutrino Detector ability for the first time; when the base game detector slot is replaced with it, the hyperspace slot becomes the base game detector to preserve detector functionality in hyperspace.
   - Boss bounties only show up if the previous stage has been concluded, rather than showing up right after accepting the bounty.
   - Poison Ivy and Red Hand are now tagged with no_dealer

@@ -248,7 +248,8 @@ public class SKR_voulgeStart extends CustomStart {
                             (PlanetAPI)location,
                             Global.getSector().getPlayerFaction(),
                             false,
-                            true
+                            true,
+                            3
                     );
                     
                     market.setName(txt("voulge_ColonyName"));
