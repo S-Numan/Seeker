@@ -6,7 +6,7 @@ Missile Autofab,SKR_missileFab,0,0,0,0,0,0.05,,,,2,,2,10,TRUE,TRUE,,TRUE,TRUE,,,
 Disposable Flux Sinks,SKR_fluxTorps,0,0,0,-2500,0,0,,6,0.1,,,,0.1,FALSE,,,,,,,,,,,,graphics/icons/hullsys/flare_launcher.png
 Global Flare Launcher,SKR_superFlare,,,,,,,,5,0.02,,,,10,,,,,,,,,,,,,graphics/icons/hullsys/flare_launcher.png
 Fast Shield Unfolding,SKR_fastShield,,,,,,,,2,0.02,1,1,1,10,,,,,,,,,,,,,graphics/icons/hullsys/fortress_shield.png
-Heavy Weapons Platform,ART_weaponPlatform,,,,,,,,4,0,0,,0,0,,,,,,,,,,,,,graphics/icons/hullsys/drone_pd_mid.png
+#Heavy Weapons Platform,ART_weaponPlatform,,,,,,,,4,0,0,,0,0,,,,,,,,,,,,,graphics/icons/hullsys/drone_pd_mid.png
 Denial Pulse,SKR_pulse,,,,,,0.15,,,,2,3,0.5,16.5,,,,,,,,,TRUE,TRUE,,,graphics/icons/hullsys/fortress_shield.png
 Overdrive sub-systems,SKR_overdrive,,,,,,,,1,,,,,,TRUE,,,,,,,,,,,,graphics/icons/hullsys/infernium_injector.png
 Blitz Skimmer,SKR_displacer,,,,,,,,9,0.2,0.05,,0.05,0,,TRUE,,TRUE,,,,,,,,,graphics/icons/hullsys/displacer.png
