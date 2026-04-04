@@ -12,7 +12,7 @@ Ancient Armor,SKR_ancientArmor,4,1,,defensive,,10000,,TRUE,,0,0,0,0,data.hullmod
 Shield Upgrade,SKR_shieldUpgrade,4,1,,"defensive, hide_in_codex",,10000,,TRUE,,0,0,0,0,data.hullmods.SKR_shieldUpgrade,"With a proper passage in a dry-dock, a proper shield can be installed in hulls that would otherwise be too old or too large to have one. However due to the bulk of such system, it usually comes at the expense of other systems.",,graphics/SEEKER/hullmods/SKR_shieldUpgrade.png
 ,SKR_noDeck,,,,dmod,,,,TRUE,TRUE,0,0,0,0,data.hullmods.SKR_noDeck,,,graphics/SEEKER/hullmods/SKR_destroyedDeck.png
 ,,,,,,,,,,,,,,,,,,
-Drone Conversion,SKR_remote,3,0.75,,special,Fighters,10000,FALSE,FALSE,FALSE,5,8,15,20,data.hullmods.SKR_remote,"Fits all fighter wings with AVATAR remote controls, reducing pilot losses by %s. Slows the production of replacement fighters by %s.",,graphics/SEEKER/hullmods/SKR_remote.png
+Drone Conversion,SKR_remote,3,0.75,,"special, codex_unlockable",Fighters,10000,FALSE,FALSE,FALSE,5,8,15,20,data.hullmods.SKR_remote,"Fits all fighter wings with AVATAR remote controls, reducing pilot losses by %s. Slows the production of replacement fighters by %s.",,graphics/SEEKER/hullmods/SKR_remote.png
 ,,,,,,,,,,,,,,,,,,
 Ship Module,SKR_module,,,,,,,,TRUE,TRUE,0,0,0,0,data.hullmods.SKR_module,,,graphics/icons/intel/investigation.png
 Destroyed Fighter Gantry,SKR_destroyedDeck,,,,dmod,,,,TRUE,,0,0,0,0,data.hullmods.SKR_destroyedDeck,"A strikecraft autofab has been critically damaged and is no longer operable, reducing the number of available flight deck on the ship by one.",,graphics/SEEKER/hullmods/SKR_destroyedDeck.png
@@ -20,7 +20,7 @@ Destroyed Fighter Gantry,SKR_destroyedDeck,,,,dmod,,,,TRUE,,0,0,0,0,data.hullmod
 ,SKR_moreDecks,,,,,,,,TRUE,TRUE,0,0,0,0,data.hullmods.SKR_moreDecks,,,graphics/icons/intel/investigation.png
 Economical Maintenance,SKR_economic,,,,,,,,TRUE,,0,0,0,0,data.hullmods.SKR_economic,Reduces the monthly maintenance supply cost by %s.,,graphics/SEEKER/hullmods/SKR_economic.png
 ,,,,,,,,,,,,,,,,,,
-Spaceborne Farm,SKR_farm,,,,,,,,TRUE,,0,0,0,0,data.hullmods.SKR_farm,"When operating in an inhabited system with a bright primary star, this ship generates passive income from high-population worlds.
+Spaceborne Farm,SKR_farm,,,,codex_unlockable,,,,TRUE,,0,0,0,0,data.hullmods.SKR_farm,"When operating in an inhabited system with a bright primary star, this ship generates passive income from high-population worlds.
 
 Affluent elites on these planets pay premium prices for high-quality fruits and vegetables. Only colonies with a population of 5 or higher have a market wealthy enough to sustain such exclusive trade.",,graphics/SEEKER/hullmods/SKR_farm.png
 ,,,,,,,,,,,,,,,,,,
