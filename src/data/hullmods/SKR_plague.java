@@ -72,6 +72,7 @@ public class SKR_plague extends BaseHullMod {
     
     @Override
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, ShipAPI.HullSize hullSize, ShipAPI ship, float width, boolean isForModSpec) {
+        if(ship == null) return;
 	
         Map<String,Float> sources = SKR_plagueEffect.getDebuffs(ship.getVariant());
         float total=0;
