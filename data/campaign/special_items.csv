@@ -2,9 +2,7 @@ name,id,tags,tech/manufacturer,rarity,base price,stack size,cargo space,baseRaid
 ,,,,,,,,,,,,,,,
 Survey Probe LCPs,SKR_surveyProbes,"mission_item, codex_unlockable",Plague-bearer Tech,,100000,1000,1,,graphics/SEEKER/icons/cargo/SKR_probeLcp.png,ui_cargo_special_ultratech_pickup,ui_cargo_special_ultratech_drop,data.campaign.bosses.SKR_remoteSurvey_item,,"If we ommit the presence of the nanomachines themselves, Safeguard enhanced Domain tech is within our grasp of understanding. Even better its autofactories still used LCPs that are compatible with any modern carrier's. Unlike the combat drones however, it seems that Safeguard used non-corrupted probes to enhance its awareness of its surroundings. If integrated, those probe LCPs would significantly improve the fleet's capacity to survey from a distance.
 
-Replace the Remote Survey skill with an improved version that works from hyperspace.
-Automatically provide partial survey for planets within your sensor range
-Do not disable Sustained Burn when using Remote Survery or Active Sensor burst.",0
+Replace the Remote Survey skill with an improved version that works from hyperspace.",0
 ,,,,,,,,,,,,,,,
 Nano-laminated Neutrino Sensors,SKR_neutrinoSensors,"mission_item, codex_unlockable",Plague-bearer Tech,,100000,1000,1,,graphics/SEEKER/icons/cargo/SKR_neutrinoSensors.png,ui_cargo_special_ultratech_pickup,ui_cargo_special_ultratech_drop,data.campaign.bosses.SKR_neutrinoDetector_item,,"A study of the wreckage of Rampage revealed a plethora of highly sensitive neutrino detectors dotting the armor. Reproducing them would be difficult, but fortunately those devices are not directly laced with the nano-plague. Despite the battle damage, enough could be recovered to potentially improve the neutrino detection capacity of the fleet. If integrated to the ships of course.
 
