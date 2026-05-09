@@ -20,7 +20,7 @@ Destroyed Fighter Gantry,SKR_destroyedDeck,,,,dmod,,,,TRUE,,0,0,0,0,data.hullmod
 ,SKR_moreDecks,,,,,,,,TRUE,TRUE,0,0,0,0,data.hullmods.SKR_moreDecks,,,graphics/icons/intel/investigation.png
 Economical Maintenance,SKR_economic,,,,,,,,TRUE,,0,0,0,0,data.hullmods.SKR_economic,Reduces the monthly maintenance supply cost by %s.,,graphics/SEEKER/hullmods/SKR_economic.png
 ,,,,,,,,,,,,,,,,,,
-Spaceborne Farm,SKR_farm,,,,codex_unlockable,,,,TRUE,,0,0,0,0,data.hullmods.SKR_farm,"When operating in an inhabited system with a bright primary star, this ship generates passive income from high-population worlds.
+Spaceborne Farm,SKR_farm,,,,codex_require_related,,,,TRUE,,0,0,0,0,data.hullmods.SKR_farm,"When operating in an inhabited system with a bright primary star, this ship generates passive income from high-population worlds.
 
 Affluent elites on these planets pay premium prices for high-quality fruits and vegetables. Only colonies with a population of 5 or higher have a market wealthy enough to sustain such exclusive trade.",,graphics/SEEKER/hullmods/SKR_farm.png
 ,,,,,,,,,,,,,,,,,,
