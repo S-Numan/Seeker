@@ -938,7 +938,7 @@
 		"target_last_name": "Tazerface",
 		"target_portrait": "SKR_siegfried",
 		"target_gender": "FEMALE",
-		"target_rank": "Captain",
+		"target_rank": "spaceCaptain",
 		"target_post": "Warlord",
 		"target_personality": "aggressive",
 		"target_isAI": false,
