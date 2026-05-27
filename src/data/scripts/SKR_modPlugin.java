@@ -22,6 +22,8 @@ import data.scripts.ai.SKR_obsidianMissileAI;
 import data.scripts.ai.SKR_oversteerMissileAI;
 import data.scripts.ai.SKR_stepMissileAI;
 import data.scripts.ai.SKR_sunburstMissileAI;
+import data.scripts.world.SEEKER_CampaignPlugin;
+import org.magiclib.bounty.MagicBountyCampaignPlugin;
 import org.magiclib.util.MagicSettings;
 import data.scripts.util.SKR_plagueEffect;
 import static data.scripts.util.SKR_txt.txt;
@@ -121,6 +123,8 @@ public class SKR_modPlugin extends BaseModPlugin {
         }*/
 
         setCurrentSeekerVersion();
+
+        Global.getSector().registerPlugin(new SEEKER_CampaignPlugin());
     }
     
     @Override
