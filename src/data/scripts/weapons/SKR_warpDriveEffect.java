@@ -30,6 +30,17 @@ public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
     private float timer=0;
 
     private boolean enableCollisionNextTick = false;
+
+    private enum WarpState {
+        INITIAL,
+        SEARCHING,
+        TARGETING,
+        TELEGRAPHING,
+        WARPING,
+        DONE
+    }
+
+    private WarpState warpState = WarpState.INITIAL;
     
     @Override
     public void advance(float amount, CombatEngineAPI engine, WeaponAPI weapon){
@@ -47,24 +58,29 @@ public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
 //            }
         }
 
-        if(enableCollisionNextTick) {
-            if(ship.isShipWithModules()) {
-                for (ShipAPI m : ship.getChildModulesCopy()) {
-                    m.setCollisionClass(CollisionClass.SHIP);
-                }
-            }
-            ship.setCollisionClass(CollisionClass.SHIP);
-        }
+        /*if(enableCollisionNextTick) {
+            enableCollision();
+
+            enableCollisionNextTick = false;
+        }*/
 
         if (engine.isPaused() || ship.getOriginalOwner() < 0 || !ActiveWarp) return;
 
+        /*if(!ship.isAlive()) {
+            Global.getLogger(this.getClass()).error("Ship of hull '" + ship.getHullSpec().getHullName() + "' is not alive when it should be alive. Removing ship from combat to prevent further issues");
+            engine.getFleetManager(ship.getOwner()).removeDeployed(ship, false);
+            engine.removeEntity(ship);
+            ActiveWarp = false;
+            return;
+        }*/
+
         //retreating warp out check        
-        if(ship.isAlive() && ship.isRetreating() && ship.getTravelDrive().isActive() && ship.getTravelDrive().getEffectLevel()==1){
+        if(ship.isAlive() && ship.isRetreating() && ship.getTravelDrive().isActive() && ship.getTravelDrive().getEffectLevel() >= 0.99f){
             warpOut(ship);
         }
 
         //chose a warp mode    
-        if(ship.getOwner()<1){
+        if(ship.getOwner() == 0){
             //basic warp in for player side
             moveToLocation(ship, MathUtils.getPoint(ship.getLocation(), 3000, ship.getFacing()), ship.getFacing(), 300);
             ship.turnOnTravelDrive(1);
@@ -76,56 +92,100 @@ public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
             }
 
             ActiveWarp=false;
-        } else            
-        {
-            // advanced BOSS warp in
-            if(warpTo!=null){
-                //warp animation
-                if(timer<1){
-                    timer +=amount/(float)TELEGRAPHING;
-                    warpZone(engine,timer,warpTo,true);
-                } else {  
-                    
+        } else {
+            switch (warpState) {
+                case INITIAL:
+                    moveToLocation(ship, new Vector2f(0, DISTANCE), 180, 0);
+                    freeze(ship.getMutableStats());
+                    warpState = WarpState.SEARCHING;
+                    break;
+                case SEARCHING:
+                    target = findSuitableTarget(engine, FleetSide.PLAYER);
+
+                    if (target != null && target.isAlive()) {
+                        warpState = WarpState.TARGETING;
+                    } else {
+                        // fallback warp position: slightly below top-center of map
+                        float mapHeight = engine.getMapHeight();
+                        warpTo = new Vector2f(0f, mapHeight * 0.4f);
+
+                        timer = 0f;
+                        warpState = WarpState.TELEGRAPHING;
+                        Global.getLogger(this.getClass()).warn("failed to find target, making fake target");
+                    }
+                    break;
+
+                case TARGETING:
+                    if (target == null || !target.isAlive()) {
+                        warpState = WarpState.SEARCHING;
+                        break;
+                    }
+
+                    warpTo = findWarpLocation(engine, target);
+
+                    if (warpTo != null) {
+                        timer = 0f;
+                        warpState = WarpState.TELEGRAPHING;
+                    } else {
+                        // retry next frame
+                        warpState = WarpState.SEARCHING;
+                    }
+                    break;
+
+                case TELEGRAPHING:
+                    if (warpTo == null) {
+                        float mapHeight = engine.getMapHeight();
+                        warpTo = new Vector2f(0f, mapHeight * 0.4f);
+                        Global.getLogger(this.getClass()).warn("warpTo is null, making fake warpTo");
+                    }
+
+                    timer += amount / (float) TELEGRAPHING;
+                    timer = Math.min(timer, 1f); // clamp
+
+                    warpZone(engine, timer, warpTo, true);
+
+                    if (timer >= 1f) {
+                        warpState = WarpState.WARPING;
+                    }
+                    break;
+
+                case WARPING:
                     warpIn(ship);
-                    
-                    //turn off warp script
-                    ActiveWarp=false;
-                    timer=0;
-                }
-            } else if (target!=null && target.isAlive()){
-                //find the warp coordinates
-                warpTo = findWarpLocation(engine, target);
-            } else {
-                //find a suitable target to warp to
-                target = findSuitableTarget(engine, FleetSide.PLAYER);
-                
-                //move the boss away in the meantime
-                moveToLocation(ship, new Vector2f(0,DISTANCE),180,0);
-//                if(!ship.getTravelDrive().isOn()){
-//                    ship.turnOnTravelDrive(9999);
-//                }
 
+                    // reset everything cleanly
+                    warpTo = null;
+                    target = null;
+                    timer = 0f;
 
-                freeze(ship.getMutableStats());
-                
-                //try to prevent modules from firing and launching fighters by activating a dummy travel drive
-//                if(ship.isShipWithModules()){
-//                    for(ShipAPI m : ship.getChildModulesCopy()){
-//                        if(!m.getTravelDrive().isOn()){
-//                            m.turnOnTravelDrive(9999);
-//                        }
-//                    }
-//                }
+                    ActiveWarp = false;
+                    warpState = WarpState.DONE;
+                    break;
+
+                case DONE:
+                    // do nothing
+                    break;
             }
+        }
+    }
+
+    private void enableCollision() {
+        if(ship.isShipWithModules()) {
+            for (ShipAPI m : ship.getChildModulesCopy()) {
+                m.setCollisionClass(CollisionClass.SHIP);
+            }
+        }
+        ship.setCollisionClass(CollisionClass.SHIP);
+    }
+    private void disableCollision() {
+        ship.setCollisionClass(CollisionClass.NONE);
+        for (ShipAPI module : ship.getChildModulesCopy()) {
+            module.setCollisionClass(CollisionClass.NONE);
         }
     }
     
     private void freeze(MutableShipStatsAPI stats){
 
-        ship.setCollisionClass(CollisionClass.NONE);
-        for (ShipAPI module : ship.getChildModulesCopy()) {
-            module.setCollisionClass(CollisionClass.NONE);
-        }
+        //disableCollision();
 
         stats.getMaxSpeed().modifyMult(ID, 0);
         stats.getAcceleration().modifyMult(ID, 0);
@@ -134,11 +194,11 @@ public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
         stats.getMaxTurnRate().modifyMult(ID, 0);
         stats.getFluxCapacity().modifyMult(ID, 0);
         stats.getFluxDissipation().modifyMult(ID, 0);
-        //stats.getHullDamageTakenMult().modifyMult(ID, 0);
+        stats.getHullDamageTakenMult().modifyMult(ID, 0);
     }
     private void unfreeze(MutableShipStatsAPI stats){
 
-        enableCollisionNextTick = true;
+        //enableCollisionNextTick = true;
 
         stats.getMaxSpeed().unmodify(ID);
         stats.getAcceleration().unmodify(ID);
@@ -147,7 +207,7 @@ public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
         stats.getMaxTurnRate().unmodify(ID);
         stats.getFluxCapacity().unmodify(ID);
         stats.getFluxDissipation().unmodify(ID);
-        //stats.getHullDamageTakenMult().unmodify(ID);
+        stats.getHullDamageTakenMult().unmodify(ID);
     }
     private void moveToLocation(ShipAPI ship, Vector2f targetLoc, float azimuth, float speed) {
         ship.setFacing(azimuth);
@@ -247,7 +307,7 @@ public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
             if (CombatUtils.isVisibleToSide(target, 1 /*enemy side*/)){
                 // return a random point a bit further above the target
                 return new Vector2f(target.getLocation().x + MathUtils.getRandomNumberInRange(-500, 500), target.getLocation().y + MathUtils.getRandomNumberInRange(2000, 3000));
-            } else return null;            
+            } else return null;
         } else {
             //solo deployment, wait for the target to move further that the middle of the map
             if (target.getLocation().y >= 0 - engine.getTotalElapsedTime(false)*20){
@@ -262,7 +322,7 @@ public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
     */  
     private ShipAPI findSuitableTarget(CombatEngineAPI engine, FleetSide side){
         //Skip if there are no ship to find
-        if(engine.getFleetManager(side).getDeployedCopy().size()<=0)return null;
+        if(engine.getFleetManager(side).getDeployedCopy().isEmpty()) return null;
         
         //if the player flagship is deployed, this is the priority target
         if(side==FleetSide.PLAYER && engine.getPlayerShip()!=null && engine.getPlayerShip().isAlive()){
