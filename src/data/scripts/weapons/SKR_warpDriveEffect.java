@@ -29,7 +29,7 @@ public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
     private Vector2f warpTo=null;
     private float timer=0;
 
-    private boolean enableCollisionNextTick = false;
+    //private boolean enableCollisionNextTick = false;
 
     private enum WarpState {
         INITIAL,
