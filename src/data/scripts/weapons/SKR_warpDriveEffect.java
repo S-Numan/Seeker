@@ -22,14 +22,12 @@ import org.lwjgl.util.vector.Vector2f;
 public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {    
     
     private boolean runOnce=false, ActiveWarp=true;
-    private final Integer PUSH = 1000000, DISTANCE = 20000, TELEGRAPHING = 10;    
+    private final Integer PUSH = 1000000, DISTANCE = 20000, TELEGRAPHING = 10;
     private final String ID = "warpDrive";
     
     private ShipAPI target=null, ship=null;
     private Vector2f warpTo=null;
     private float timer=0;
-
-    //private boolean enableCollisionNextTick = false;
 
     private enum WarpState {
         INITIAL,
@@ -48,21 +46,15 @@ public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
         if(!runOnce){
             runOnce=true;
             ship=weapon.getShip();
-//            ship.turnOnTravelDrive(9999);
-//            
-//            //try to prevent modules from firing and launching fighters by activating a dummy travel drive
-//            if(ship.isShipWithModules()){
-//                for(ShipAPI m : ship.getChildModulesCopy()){
-//                    m.turnOnTravelDrive(9999);
-//                }
-//            }
+            /*ship.turnOnTravelDrive(9999);
+
+            //try to prevent modules from firing and launching fighters by activating a dummy travel drive
+            if(ship.isShipWithModules()){
+                for(ShipAPI m : ship.getChildModulesCopy()){
+                    m.turnOnTravelDrive(9999);
+                }
+            }*/
         }
-
-        /*if(enableCollisionNextTick) {
-            enableCollision();
-
-            enableCollisionNextTick = false;
-        }*/
 
         if (engine.isPaused() || ship.getOriginalOwner() < 0 || !ActiveWarp) return;
 
@@ -167,25 +159,10 @@ public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
             }
         }
     }
-
-    private void enableCollision() {
-        if(ship.isShipWithModules()) {
-            for (ShipAPI m : ship.getChildModulesCopy()) {
-                m.setCollisionClass(CollisionClass.SHIP);
-            }
-        }
-        ship.setCollisionClass(CollisionClass.SHIP);
-    }
-    private void disableCollision() {
-        ship.setCollisionClass(CollisionClass.NONE);
-        for (ShipAPI module : ship.getChildModulesCopy()) {
-            module.setCollisionClass(CollisionClass.NONE);
-        }
-    }
     
     private void freeze(MutableShipStatsAPI stats){
 
-        //disableCollision();
+        // Ideally collision would be disabled, but it causes invincibility issues in some cases, even if waiting a tick before and after disabling/enabling.
 
         stats.getMaxSpeed().modifyMult(ID, 0);
         stats.getAcceleration().modifyMult(ID, 0);
@@ -195,10 +172,9 @@ public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
         stats.getFluxCapacity().modifyMult(ID, 0);
         stats.getFluxDissipation().modifyMult(ID, 0);
         stats.getHullDamageTakenMult().modifyMult(ID, 0);
+        stats.getArmorDamageTakenMult().modifyMult(ID, 0);
     }
     private void unfreeze(MutableShipStatsAPI stats){
-
-        //enableCollisionNextTick = true;
 
         stats.getMaxSpeed().unmodify(ID);
         stats.getAcceleration().unmodify(ID);
@@ -208,27 +184,12 @@ public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
         stats.getFluxCapacity().unmodify(ID);
         stats.getFluxDissipation().unmodify(ID);
         stats.getHullDamageTakenMult().unmodify(ID);
+        stats.getArmorDamageTakenMult().unmodify(ID);
     }
     private void moveToLocation(ShipAPI ship, Vector2f targetLoc, float azimuth, float speed) {
         ship.setFacing(azimuth);
 
         Vector2f newLoc = new Vector2f(targetLoc);
-
-        //Prevent ship overlapping another on move. If this happens. the ship becomes invincible for some reason. //Replaced with enableCollisionNextTick
-        /*List<ShipAPI> allShips = Global.getCombatEngine().getShips();
-        for (ShipAPI other : allShips) {
-            if (other == ship || other.isShuttlePod()) continue;
-
-            float minDist = ship.getCollisionRadius() + other.getCollisionRadius() + 10f;
-            float actualDist = MathUtils.getDistance(newLoc, other.getLocation());
-
-            if (actualDist < minDist) {
-                float pushAngle = VectorUtils.getAngle(other.getLocation(), newLoc);
-                Vector2f pushLoc = MathUtils.getPointOnCircumference(other.getLocation(), minDist, pushAngle);
-                newLoc.set(pushLoc); // Update to safe position
-            }
-        }*/
-
 
         ship.getLocation().set(newLoc);
 
