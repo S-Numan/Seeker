@@ -30,7 +30,7 @@ public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
     private Vector2f warpTo=null;
     private float timer=0;
     private float noTargetTimer=0f;
-    private static final float FORCE_SPAWN_TIMEOUT = 20f; // seconds stuck without a valid warp point before we force one
+    private static final float FORCE_SPAWN_TIMEOUT = 40f; // seconds stuck without a valid warp point before we force one
 
     private enum WarpState {
         INITIAL,
@@ -99,7 +99,7 @@ public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
 
                     if (target != null && target.isAlive()) {
                         warpState = WarpState.TARGETING;
-                    } else {
+                    } else if (!engine.getFleetManager(FleetSide.PLAYER).getDeployedCopy().isEmpty()){
                         // fallback warp position: slightly below top-center of map
                         float mapHeight = engine.getMapHeight();
                         warpTo = new Vector2f(0f, mapHeight * 0.4f);
@@ -210,9 +210,8 @@ public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
 
         // Face the target (the enemies) on arrival where we have one; otherwise fall back to
         // facing along the direction of travel, e.g. for the no-target fallback warp-in.
-        float facing = (target != null && target.isAlive())
-                ? VectorUtils.getAngle(warpTo, target.getLocation())
-                : VectorUtils.getAngle(ship.getLocation(), warpTo);
+        float facing = (target != null && target.isAlive()) ? VectorUtils.getAngle(warpTo, target.getLocation()) :
+                VectorUtils.getAngle(ship.getLocation(), warpTo);
 
         moveToLocation(ship, warpTo, facing, 300);
         ship.turnOffTravelDrive();
@@ -295,17 +294,20 @@ public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
         }
 
         // No friendlies deployed yet (first ship in) - fall back to the old ahead-of-target placement.
-        return new Vector2f(target.getLocation().x + MathUtils.getRandomNumberInRange(-500, 500), target.getLocation().y + MathUtils.getRandomNumberInRange(2000, 3000));
+        if (forceSpawn || target.getLocation().y >= 0 - engine.getTotalElapsedTime(false)*20){ // wait for the target to move further that the middle of the map
+            return new Vector2f(target.getLocation().x + MathUtils.getRandomNumberInRange(-500, 500), target.getLocation().y + MathUtils.getRandomNumberInRange(2600, 3000));
+        }
+        return null;
     }
 
     /*
-    Places the spawn point just past the frontmost ally, biased toward the target, within a narrow cone -
-    so the arrival lands ahead of (or level with) the front of the formation and never behind allies,
-    facing the enemy line rather than the fleet's own rear.
+    Places the spawn point just behind the frontmost ally, biased toward the target, within a narrow cone -
+    so the arrival lands roughly with the front of the formation,
+    facing the enemy line.
     */
     private Vector2f pickSpawnAtFormationFront(ShipAPI frontShip, ShipAPI target){
         float angleToTarget = VectorUtils.getAngle(frontShip.getLocation(), target.getLocation());
-        float dist = MathUtils.getRandomNumberInRange(50, 100);
+        float dist = MathUtils.getRandomNumberInRange(-500, -600);
         float angle = angleToTarget + MathUtils.getRandomNumberInRange(-20, 20);
         return MathUtils.getPoint(frontShip.getLocation(), dist, angle);
     }
@@ -340,7 +342,7 @@ public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
 
         for (FleetMemberAPI m : engine.getFleetManager(FleetSide.ENEMY).getDeployedCopy()){
             ShipAPI s = engine.getFleetManager(FleetSide.ENEMY).getShipFor(m);
-            if (s == null || s == ship || !s.isAlive() || m.isFighterWing()) continue;
+            if (s == null || s == ship || !s.isAlive() || s.isStationModule() || m.isFighterWing()) continue;
             friendlies.add(s);
         }
 
