@@ -9,6 +9,7 @@ import org.magiclib.util.MagicLensFlare;
 import org.magiclib.util.MagicRender;
 import data.scripts.util.SKR_graphicLibEffects;
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -206,7 +207,14 @@ public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
 
     private void warpIn(ShipAPI ship){
         unfreeze(ship.getMutableStats());
-        moveToLocation(ship, warpTo, VectorUtils.getAngle(ship.getLocation(), warpTo), 300);
+
+        // Face the target (the enemies) on arrival where we have one; otherwise fall back to
+        // facing along the direction of travel, e.g. for the no-target fallback warp-in.
+        float facing = (target != null && target.isAlive())
+                ? VectorUtils.getAngle(warpTo, target.getLocation())
+                : VectorUtils.getAngle(ship.getLocation(), warpTo);
+
+        moveToLocation(ship, warpTo, facing, 300);
         ship.turnOffTravelDrive();
         ship.turnOnTravelDrive(2);
 //        ship.getTravelDrive().forceState(ShipSystemAPI.SystemState.OUT, 1);
@@ -280,14 +288,10 @@ public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
             return null;
         }
 
-        Vector2f friendlyCentroid = getFriendlyFleetCentroid(engine);
+        ShipAPI frontShip = getFrontmostFriendlyShip(engine, target);
 
-        if (friendlyCentroid != null){
-            // Land just outside the existing friendly formation, biased toward the target,
-            // instead of always spawning far out ahead of the target on its own.
-            float angleToTarget = VectorUtils.getAngle(friendlyCentroid, target.getLocation());
-            float dist = MathUtils.getRandomNumberInRange(800, 1500);
-            return MathUtils.getPoint(friendlyCentroid, dist, angleToTarget + MathUtils.getRandomNumberInRange(-25, 25));
+        if (frontShip != null){
+            return pickSpawnAtFormationFront(frontShip, target);
         }
 
         // No friendlies deployed yet (first ship in) - fall back to the old ahead-of-target placement.
@@ -295,23 +299,52 @@ public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
     }
 
     /*
-    Returns the average position of this ship's already-deployed, living, non-fighter allies,
-    or null if there are none (e.g. this is the first ship warping in).
+    Places the spawn point just past the frontmost ally, biased toward the target, within a narrow cone -
+    so the arrival lands ahead of (or level with) the front of the formation and never behind allies,
+    facing the enemy line rather than the fleet's own rear.
     */
-    private Vector2f getFriendlyFleetCentroid(CombatEngineAPI engine){
-        Vector2f sum = new Vector2f();
-        int count = 0;
+    private Vector2f pickSpawnAtFormationFront(ShipAPI frontShip, ShipAPI target){
+        float angleToTarget = VectorUtils.getAngle(frontShip.getLocation(), target.getLocation());
+        float dist = MathUtils.getRandomNumberInRange(50, 100);
+        float angle = angleToTarget + MathUtils.getRandomNumberInRange(-20, 20);
+        return MathUtils.getPoint(frontShip.getLocation(), dist, angle);
+    }
+
+    /*
+    Returns this ship's already-deployed, living, non-fighter ally that's closest to the target -
+    i.e. the front of the formation, the side facing the enemy. Returns null if there are no such
+    allies (e.g. this is the first ship warping in).
+    */
+    private ShipAPI getFrontmostFriendlyShip(CombatEngineAPI engine, ShipAPI target){
+        List<ShipAPI> friendlies = collectFriendlyShips(engine);
+        if (friendlies.isEmpty()) return null;
+
+        ShipAPI front = null;
+        float closestDistSq = Float.MAX_VALUE;
+        for (ShipAPI s : friendlies){
+            float distSq = MathUtils.getDistanceSquared(s.getLocation(), target.getLocation());
+            if (distSq < closestDistSq){
+                closestDistSq = distSq;
+                front = s;
+            }
+        }
+
+        return front;
+    }
+
+    /*
+    Returns this ship's already-deployed, living, non-fighter allies.
+    */
+    private List<ShipAPI> collectFriendlyShips(CombatEngineAPI engine){
+        List<ShipAPI> friendlies = new ArrayList<>();
 
         for (FleetMemberAPI m : engine.getFleetManager(FleetSide.ENEMY).getDeployedCopy()){
             ShipAPI s = engine.getFleetManager(FleetSide.ENEMY).getShipFor(m);
             if (s == null || s == ship || !s.isAlive() || m.isFighterWing()) continue;
-
-            Vector2f.add(sum, s.getLocation(), sum);
-            count++;
+            friendlies.add(s);
         }
 
-        if (count == 0) return null;
-        return new Vector2f(sum.x / count, sum.y / count);
+        return friendlies;
     }
 
     /*
@@ -326,7 +359,7 @@ public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
             return engine.getPlayerShip();
         }
 
-        //if the player ship is not deployed, find the biggest target around        
+        //if the player ship is not deployed, find the biggest target around
         Map <ShipAPI.HullSize, FleetMemberAPI> ships= new WeakHashMap<>();
 
         for (FleetMemberAPI m : engine.getFleetManager(side).getDeployedCopy()){
@@ -625,7 +658,7 @@ public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
                 GL_ONE_MINUS_SRC_ALPHA
         );
 
-        //trail        
+        //trail
         if(!retreating){
             for(int i=1; i<50; i++){
 
