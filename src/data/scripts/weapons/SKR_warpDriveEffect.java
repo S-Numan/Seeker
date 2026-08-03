@@ -19,15 +19,17 @@ import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_COLOR;
 import org.lwjgl.util.vector.Vector2f;
 
-public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {    
-    
+public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
+
     private boolean runOnce=false, ActiveWarp=true;
     private final Integer PUSH = 1000000, DISTANCE = 20000, TELEGRAPHING = 10;
     private final String ID = "warpDrive";
-    
+
     private ShipAPI target=null, ship=null;
     private Vector2f warpTo=null;
     private float timer=0;
+    private float noTargetTimer=0f;
+    private static final float FORCE_SPAWN_TIMEOUT = 20f; // seconds stuck without a valid warp point before we force one
 
     private enum WarpState {
         INITIAL,
@@ -39,10 +41,10 @@ public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
     }
 
     private WarpState warpState = WarpState.INITIAL;
-    
+
     @Override
     public void advance(float amount, CombatEngineAPI engine, WeaponAPI weapon){
-        
+
         if(!runOnce){
             runOnce=true;
             ship=weapon.getShip();
@@ -66,12 +68,12 @@ public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
             return;
         }*/
 
-        //retreating warp out check        
+        //retreating warp out check
         if(ship.isAlive() && ship.isRetreating() && ship.getTravelDrive().isActive() && ship.getTravelDrive().getEffectLevel() >= 0.99f){
             warpOut(ship);
         }
 
-        //chose a warp mode    
+        //chose a warp mode
         if(ship.getOwner() == 0){
             //basic warp in for player side
             moveToLocation(ship, MathUtils.getPoint(ship.getLocation(), 3000, ship.getFacing()), ship.getFacing(), 300);
@@ -110,16 +112,20 @@ public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
                 case TARGETING:
                     if (target == null || !target.isAlive()) {
                         warpState = WarpState.SEARCHING;
+                        noTargetTimer = 0f;
                         break;
                     }
 
-                    warpTo = findWarpLocation(engine, target);
+                    warpTo = findWarpLocation(engine, target, noTargetTimer >= FORCE_SPAWN_TIMEOUT);
 
                     if (warpTo != null) {
                         timer = 0f;
+                        noTargetTimer = 0f;
                         warpState = WarpState.TELEGRAPHING;
                     } else {
-                        // retry next frame
+                        // retry next frame, but keep track of how long we've been stuck so
+                        // we don't wait forever on a target the fleet can't get eyes on
+                        noTargetTimer += amount;
                         warpState = WarpState.SEARCHING;
                     }
                     break;
@@ -159,7 +165,7 @@ public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
             }
         }
     }
-    
+
     private void freeze(MutableShipStatsAPI stats){
 
         // Ideally collision would be disabled, but it causes invincibility issues in some cases, even if waiting a tick before and after disabling/enabling.
@@ -197,7 +203,7 @@ public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
         Vector2f newVel = MathUtils.getPoint(new Vector2f(), speed, azimuth);
         ship.getVelocity().set(newVel);
     }
-    
+
     private void warpIn(ShipAPI ship){
         unfreeze(ship.getMutableStats());
         moveToLocation(ship, warpTo, VectorUtils.getAngle(ship.getLocation(), warpTo), 300);
@@ -206,8 +212,8 @@ public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
 //        ship.getTravelDrive().forceState(ShipSystemAPI.SystemState.OUT, 1);
 
         //land wings
-        if(!ship.getAllWings().isEmpty()){            
-            List <FighterWingAPI> wings = ship.getAllWings();            
+        if(!ship.getAllWings().isEmpty()){
+            List <FighterWingAPI> wings = ship.getAllWings();
             for(FighterWingAPI w : wings){
                 if(!w.getWingMembers().isEmpty()){
                     for(ShipAPI f : w.getWingMembers()){
@@ -225,8 +231,8 @@ public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
                 m.turnOffTravelDrive();
                 m.turnOnTravelDrive(3);
                 //land wings
-                if(!m.getAllWings().isEmpty()){            
-                    List <FighterWingAPI> wings = m.getAllWings();            
+                if(!m.getAllWings().isEmpty()){
+                    List <FighterWingAPI> wings = m.getAllWings();
                     for(FighterWingAPI w : wings){
                         if(!w.getWingMembers().isEmpty()){
                             for(ShipAPI f : w.getWingMembers()){
@@ -239,60 +245,90 @@ public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
             }
         }
     }
-    
-    private void warpOut(ShipAPI ship){        
+
+    private void warpOut(ShipAPI ship){
         warpVisualEffect(ship, Global.getSettings().getModManager().isModEnabled("shaderLib"), true);
         moveToLocation(ship, MathUtils.getPoint(ship.getLocation(), DISTANCE, ship.getFacing()), ship.getFacing(), 600);
     }
-    
+
     /*
-    Returns a random point further up from a target if visible
-    Returns null while there are no such target in range
-    */ 
-    private Vector2f findWarpLocation(CombatEngineAPI engine, ShipAPI target){
-        
+    Returns a warp-in point near the ship's own fleet (biased toward the target), so reinforcements
+    land next to their allies instead of isolated ahead of the target.
+    Returns null while we're still waiting on a valid opportunity to warp in (unless forceSpawn is true).
+    */
+    private Vector2f findWarpLocation(CombatEngineAPI engine, ShipAPI target, boolean forceSpawn){
+
         //if there are no valid target, just wait
         if (target == null){
             return null;
         }
-        
+
         Integer shipOrFleet = 0;
         for(FleetMemberAPI m : engine.getFleetManager(FleetSide.ENEMY).getDeployedCopy()){
             if(engine.getFleetManager(FleetSide.ENEMY).getShipFor(m).getParentStation()==null && !m.isFighterWing()){
                 shipOrFleet++;
             }
         }
-        
-        if(shipOrFleet>1){
-            //fleet deployment, check if the target is in visual range of scouts
-            if (CombatUtils.isVisibleToSide(target, 1 /*enemy side*/)){
-                // return a random point a bit further above the target
-                return new Vector2f(target.getLocation().x + MathUtils.getRandomNumberInRange(-500, 500), target.getLocation().y + MathUtils.getRandomNumberInRange(2000, 3000));
-            } else return null;
-        } else {
-            //solo deployment, wait for the target to move further that the middle of the map
-            if (target.getLocation().y >= 0 - engine.getTotalElapsedTime(false)*20){
-                // return a random point a bit further above the target
-                return new Vector2f(target.getLocation().x + MathUtils.getRandomNumberInRange(-500, 500), target.getLocation().y + MathUtils.getRandomNumberInRange(2000, 3000));
-            } else return null;
+
+        boolean soloDeployment = shipOrFleet <= 1;
+        boolean canSeeTarget = CombatUtils.isVisibleToSide(target, 1 /*enemy side*/);
+
+        //fleet deployment normally waits for a scout to get eyes on the target; solo deployment never
+        //needed this. forceSpawn lets a fleet that's been waiting too long (e.g. player is hanging back
+        //out of detection range) go ahead anyway instead of stalling forever.
+        if (!forceSpawn && !soloDeployment && !canSeeTarget){
+            return null;
         }
+
+        Vector2f friendlyCentroid = getFriendlyFleetCentroid(engine);
+
+        if (friendlyCentroid != null){
+            // Land just outside the existing friendly formation, biased toward the target,
+            // instead of always spawning far out ahead of the target on its own.
+            float angleToTarget = VectorUtils.getAngle(friendlyCentroid, target.getLocation());
+            float dist = MathUtils.getRandomNumberInRange(800, 1500);
+            return MathUtils.getPoint(friendlyCentroid, dist, angleToTarget + MathUtils.getRandomNumberInRange(-25, 25));
+        }
+
+        // No friendlies deployed yet (first ship in) - fall back to the old ahead-of-target placement.
+        return new Vector2f(target.getLocation().x + MathUtils.getRandomNumberInRange(-500, 500), target.getLocation().y + MathUtils.getRandomNumberInRange(2000, 3000));
+    }
+
+    /*
+    Returns the average position of this ship's already-deployed, living, non-fighter allies,
+    or null if there are none (e.g. this is the first ship warping in).
+    */
+    private Vector2f getFriendlyFleetCentroid(CombatEngineAPI engine){
+        Vector2f sum = new Vector2f();
+        int count = 0;
+
+        for (FleetMemberAPI m : engine.getFleetManager(FleetSide.ENEMY).getDeployedCopy()){
+            ShipAPI s = engine.getFleetManager(FleetSide.ENEMY).getShipFor(m);
+            if (s == null || s == ship || !s.isAlive() || m.isFighterWing()) continue;
+
+            Vector2f.add(sum, s.getLocation(), sum);
+            count++;
+        }
+
+        if (count == 0) return null;
+        return new Vector2f(sum.x / count, sum.y / count);
     }
 
     /*
     Returns the player ship if deployed on the requested side, or a random ship of the largest class, or null if there is nobody alive on the map
-    */  
+    */
     private ShipAPI findSuitableTarget(CombatEngineAPI engine, FleetSide side){
         //Skip if there are no ship to find
         if(engine.getFleetManager(side).getDeployedCopy().isEmpty()) return null;
-        
+
         //if the player flagship is deployed, this is the priority target
         if(side==FleetSide.PLAYER && engine.getPlayerShip()!=null && engine.getPlayerShip().isAlive()){
             return engine.getPlayerShip();
         }
-        
+
         //if the player ship is not deployed, find the biggest target around        
         Map <ShipAPI.HullSize, FleetMemberAPI> ships= new WeakHashMap<>();
-        
+
         for (FleetMemberAPI m : engine.getFleetManager(side).getDeployedCopy()){
             //find a target for each ship size
             if(engine.getFleetManager(side).getShipFor(m).isAlive()){
@@ -307,16 +343,16 @@ public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
                 }
             }
         }
-        
+
         //return the largest target available
-        if(ships.containsKey(ShipAPI.HullSize.CAPITAL_SHIP)) return engine.getFleetManager(side).getShipFor(ships.get(ShipAPI.HullSize.CAPITAL_SHIP));        
+        if(ships.containsKey(ShipAPI.HullSize.CAPITAL_SHIP)) return engine.getFleetManager(side).getShipFor(ships.get(ShipAPI.HullSize.CAPITAL_SHIP));
         if(ships.containsKey(ShipAPI.HullSize.CRUISER)) return engine.getFleetManager(side).getShipFor(ships.get(ShipAPI.HullSize.CRUISER));
         if(ships.containsKey(ShipAPI.HullSize.DESTROYER)) return engine.getFleetManager(side).getShipFor(ships.get(ShipAPI.HullSize.DESTROYER));
         if(ships.containsKey(ShipAPI.HullSize.FRIGATE)) return engine.getFleetManager(side).getShipFor(ships.get(ShipAPI.HullSize.FRIGATE));
         return null;
     }
-    
-    
+
+
     private void warpZone(CombatEngineAPI engine, float intensity, Vector2f location, boolean pushAway){
         if(pushAway){
             //push away ships in the danger zone
@@ -336,7 +372,7 @@ public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
                 );
             }
         }
-        
+
         //central glow
         if(Math.random()<0.1f+intensity*0.25){
             engine.addHitParticle(
@@ -352,17 +388,17 @@ public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
                     )
             );
         }
-        
+
         //Particle SUCC
         if(Math.random()<0.25f+(intensity*0.5f)){
-            
+
             Vector2f offset;
             if(pushAway){
                 offset = MathUtils.getRandomPointInCircle(new Vector2f(), 50+150*intensity);
             } else {
                 offset = MathUtils.getRandomPointInCircle(new Vector2f(), 200-150*intensity);
             }
-            
+
             engine.addHitParticle(
                     Vector2f.sub(location, offset, new Vector2f()),
                     offset,
@@ -375,9 +411,9 @@ public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
                             0.6f + 0.1f*MathUtils.getRandomNumberInRange(0, 0.5f+0.5f*intensity)
                     )
             );
-            
+
         }
-        
+
         //FLARES
         if(Math.random()<0.1f+(intensity*0.15f)){
             Vector2f offset;
@@ -386,7 +422,7 @@ public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
             } else {
                 offset = MathUtils.getRandomPointInCircle(location, 25+175*intensity);
             }
-            
+
             MagicLensFlare.createSharpFlare(
                     engine,
                     engine.getPlayerShip(),
@@ -397,7 +433,7 @@ public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
                     new Color(50,0,150),
                     Color.RED
             );
-            
+
             engine.addHitParticle(
                     offset,
                     new Vector2f(),
@@ -406,84 +442,84 @@ public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
                     MathUtils.getRandomNumberInRange(0.25f, 0.5f+0.5f*intensity),
                     new Color(100,0,175)
             );
-            
+
             if(Math.random()<0.1f){
                 Global.getSoundPlayer().playSound("SKR_arrival_ripple", 0.8f+0.4f*intensity, 0.5f+0.5f*intensity, location, new Vector2f());
             }
         }
-        
+
         //AMBIENCE SOUND
         Global.getSoundPlayer().playLoop("SKR_arrival_shadow", engine.getPlayerShip(), 1, 1, location, new Vector2f());
     }
-    
-    
+
+
     private void warpVisualEffect(ShipAPI ship, boolean shader, boolean retreating) {
         //sound
         String sound = bossArrivalSounds.get(ship.getHullSpec().getBaseHullId());
         if(sound==null){
             sound = "SKR_keep_arrival";
         }
-        
+
         Vector2f loc=new Vector2f(ship.getLocation());
 //        if(retreating)loc = MathUtils.getPoint(ship.getLocation(), DISTANCE, ship.getFacing()-180);
-        
+
         Global.getSoundPlayer().playSound(sound, 1, 1, loc, ship.getVelocity());
         Global.getSoundPlayer().playUISound(sound, 1, 0.25f);
 
         //ripple
         if(shader){
             SKR_graphicLibEffects.CustomRippleDistortion(
-                    loc, 
+                    loc,
                     new Vector2f(ship.getVelocity()),
                     720,
-                    30, 
+                    30,
                     false,
                     0,
                     360,
                     0,
                     0.1f,
                     0.6f,
-                    0.3f, 
-                    0.5f, 
+                    0.3f,
+                    0.5f,
                     0f
             );
         }
 
         //rays
-        for(int i=0; i<24; i++){            
-            
+        for(int i=0; i<24; i++){
+
             float facing;
             Vector2f randomLoc, size, growth;
             if(retreating){randomLoc = MathUtils.getRandomPointInCone(
-                            loc,
-                            720,
-                            ship.getFacing()-40,
-                            ship.getFacing()+40
-                    );
+                    loc,
+                    720,
+                    ship.getFacing()-40,
+                    ship.getFacing()+40
+            );
                 growth = new Vector2f(
-                            MathUtils.getRandomNumberInRange(1, 4),
-                            MathUtils.getRandomNumberInRange(512, 1024)
-                    );
+                        MathUtils.getRandomNumberInRange(1, 4),
+                        MathUtils.getRandomNumberInRange(512, 1024)
+                );
                 size = new Vector2f(
-                            MathUtils.getRandomNumberInRange(16, 32),
-                            MathUtils.getRandomNumberInRange(128, 256)
-                    );
+                        MathUtils.getRandomNumberInRange(16, 32),
+                        MathUtils.getRandomNumberInRange(128, 256)
+                );
                 facing = ship.getFacing()+90;
             } else {
                 randomLoc = MathUtils.getRandomPointInCone(
-                            loc,
-                            720,
-                            ship.getFacing()+140,
-                            ship.getFacing()+220
-                    );
+                        loc,
+                        720,
+                        ship.getFacing()+140,
+                        ship.getFacing()+220
+                );
                 growth = new Vector2f(
-                            MathUtils.getRandomNumberInRange(-0.5f, -2.5f),
-                            MathUtils.getRandomNumberInRange(-400, -500)
-                    );
+                        MathUtils.getRandomNumberInRange(-0.5f, -2.5f),
+                        MathUtils.getRandomNumberInRange(-400, -500)
+                );
                 size = new Vector2f(
-                            MathUtils.getRandomNumberInRange(16, 32),
-                            MathUtils.getRandomNumberInRange(512, 1024)
-                    );
+                        MathUtils.getRandomNumberInRange(16, 32),
+                        MathUtils.getRandomNumberInRange(512, 1024)
+                );
                 facing = ship.getFacing()-90;
             }
             MagicRender.battlespace(
@@ -547,7 +583,7 @@ public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
                     )
             );
         }
-        
+
         //negative cloud
         MagicRender.battlespace(
                 Global.getSettings().getSprite(
@@ -588,7 +624,7 @@ public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
                 GL_ONE_MINUS_SRC_COLOR,
                 GL_ONE_MINUS_SRC_ALPHA
         );
-        
+
         //trail        
         if(!retreating){
             for(int i=1; i<50; i++){
@@ -601,11 +637,11 @@ public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
                 for(ShipAPI s : ship.getChildModulesCopy()){
                     if(s.isAlive()){
                         s.addAfterimage(
-                        new Color(0.5f,0.25f,1f,0.15f),
-                        point.x,point.y,vel.x,vel.y,
-                        0.1f,
-                        0,0.1f,duration,
-                        false,true,false
+                                new Color(0.5f,0.25f,1f,0.15f),
+                                point.x,point.y,vel.x,vel.y,
+                                0.1f,
+                                0,0.1f,duration,
+                                false,true,false
                         );
                     }
                 }
@@ -620,5 +656,5 @@ public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
             }
         }
     }
-    
+
 }
