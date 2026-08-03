@@ -1,4 +1,13 @@
 SEEKER
+0.67
+  - Completely rewrite the boss warp in targetting and location grabbing logic.
+  - Prevent plague fleets from retreating, ever.
+  - Fix incorrect captain rank on the 'SKR_siegfried' bounty.
+  - Mark more things with codex_unlockable
+  - Gave modules the MODULE hint.
+  - Set plague faction as hostile to player by default.
+  - Fix some typos
+
 0.66
   - Recompiled with Nexerelin to fix some issues, for example, the "A Knight's Tale" Voulge custom start will no longer crash.
   - On learning the Enhanced Neutrino Detector ability for the first time; when the base game detector slot is replaced with it, the hyperspace slot becomes the base game detector to preserve detector functionality in hyperspace.
@@ -44,6 +53,7 @@ SEEKER
   - Improved voulgeStart planet finding logic for the inital colony placement.
 
 0.59
+ - S-Numan is now maintaing the mod.
  - Compiled using java 17
  - Fixed pre-existing bounties such as the safeguard and rampage.
  - Adjusted hull availability across multiple factions with the intent to reduce consistency in individual ship presence, but ideally increase overall variety. More like a splash of occasional spice, instead of ever present or not present at all.

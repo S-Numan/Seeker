@@ -5,6 +5,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.PluginPick;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CampaignPlugin;
+import com.fs.starfarer.api.campaign.RepLevel;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.combat.MissileAIPlugin;
@@ -13,6 +14,7 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import static data.campaign.ids.SKR_ids.THEME_PLAGUEBEARER;
 
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import data.scripts.ai.SKR_akitaAI;
 import data.scripts.ai.SKR_antiMissileAI;
 import data.scripts.ai.SKR_canAI;
@@ -95,9 +97,7 @@ public class SKR_modPlugin extends BaseModPlugin {
     @Override
     public void onGameLoad(boolean newGame) {
         //SAVE PATCHING CODE
-
         if (!Global.getSector().getMemoryWithoutUpdate().contains("$seeker_version")) {
-
             boolean generated = false;
             for (StarSystemAPI system : Global.getSector().getStarSystems()) {
                 if (system.hasTag(THEME_PLAGUEBEARER)) {

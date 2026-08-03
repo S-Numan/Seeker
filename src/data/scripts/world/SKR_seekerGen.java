@@ -70,6 +70,7 @@ public class SKR_seekerGen implements SectorGeneratorPlugin {
         plague.setRelationship(Factions.REMNANTS, RepLevel.FRIENDLY);
         plague.setRelationship(Factions.DERELICT, RepLevel.FRIENDLY);
         plague.setRelationship(Factions.NEUTRAL, RepLevel.NEUTRAL);
+        plague.setRelationship(Factions.PLAYER, RepLevel.HOSTILE);
     }
     
     private static final Logger LOG = Global.getLogger(SKR_seekerGen.class);
@@ -230,10 +231,11 @@ public class SKR_seekerGen implements SectorGeneratorPlugin {
             nova.getFlagship().getVariant().addTag(Tags.SHIP_LIMITED_TOOLTIP);
             nova.getFlagship().getVariant().addTag(Tags.SHIP_UNIQUE_SIGNATURE);
             nova.getFlagship().getVariant().addTag(Tags.VARIANT_UNBOARDABLE);
-            nova.getMemoryWithoutUpdate().set(MemFlags.FLEET_FIGHT_TO_THE_LAST, true);
             Global.getSector().getMemoryWithoutUpdate().set("$SKR_nova", false);
             nova.getMemoryWithoutUpdate().set("$SKR_nova", false);
 
+            nova.getMemoryWithoutUpdate().set(MemFlags.FLEET_FIGHT_TO_THE_LAST, true);
+            nova.getMemoryWithoutUpdate().set(MemFlags.MEMORY_KEY_MAKE_PREVENT_DISENGAGE, true);;
             nova.getMemoryWithoutUpdate().set(MemFlags.FLEET_IGNORES_OTHER_FLEETS, true);
             nova.getMemoryWithoutUpdate().set(MemFlags.FLEET_DO_NOT_IGNORE_PLAYER, true);
 //            selected.getStarSystem().getTags().add("theme_plaguebearers");
@@ -415,6 +417,7 @@ public class SKR_seekerGen implements SectorGeneratorPlugin {
         Global.getSector().getMemoryWithoutUpdate().set("$SKR_safeguard_boss", true);
         safeguard.getMemoryWithoutUpdate().set("$SKR_safeguard_boss", true);
         safeguard.getMemoryWithoutUpdate().set(MemFlags.FLEET_FIGHT_TO_THE_LAST, true);
+        safeguard.getMemoryWithoutUpdate().set(MemFlags.MEMORY_KEY_MAKE_PREVENT_DISENGAGE, true);;
         safeguard.getMemoryWithoutUpdate().set(MemFlags.FLEET_IGNORES_OTHER_FLEETS, true);
         safeguard.getMemoryWithoutUpdate().set(MemFlags.FLEET_DO_NOT_IGNORE_PLAYER, true);
         
@@ -498,6 +501,7 @@ public class SKR_seekerGen implements SectorGeneratorPlugin {
         Global.getSector().getMemoryWithoutUpdate().set("$SKR_rampage_boss", true);
         rampage.getMemoryWithoutUpdate().set("$SKR_rampage_boss", true);
         rampage.getMemoryWithoutUpdate().set(MemFlags.FLEET_FIGHT_TO_THE_LAST, true);
+        rampage.getMemoryWithoutUpdate().set(MemFlags.MEMORY_KEY_MAKE_PREVENT_DISENGAGE, true);;
         rampage.getMemoryWithoutUpdate().set(MemFlags.FLEET_IGNORES_OTHER_FLEETS, true);
         rampage.getMemoryWithoutUpdate().set(MemFlags.FLEET_DO_NOT_IGNORE_PLAYER, true);
         
@@ -609,6 +613,7 @@ public class SKR_seekerGen implements SectorGeneratorPlugin {
         Global.getSector().getMemoryWithoutUpdate().set("$SKR_whitedwarf_boss", true);
         whitedwarf.getMemoryWithoutUpdate().set("$SKR_whitedwarf_boss", true);
         whitedwarf.getMemoryWithoutUpdate().set(MemFlags.FLEET_FIGHT_TO_THE_LAST, true);
+        whitedwarf.getMemoryWithoutUpdate().set(MemFlags.MEMORY_KEY_MAKE_PREVENT_DISENGAGE, true);;
         whitedwarf.getMemoryWithoutUpdate().set(MemFlags.FLEET_IGNORES_OTHER_FLEETS, true);
         whitedwarf.getMemoryWithoutUpdate().set(MemFlags.FLEET_DO_NOT_IGNORE_PLAYER, true);
         
@@ -783,6 +788,7 @@ public class SKR_seekerGen implements SectorGeneratorPlugin {
         Global.getSector().getMemoryWithoutUpdate().set("$SKR_cataclysm_boss", true);
         cataclysm.getMemoryWithoutUpdate().set("$SKR_cataclysm_boss", true);
         cataclysm.getMemoryWithoutUpdate().set(MemFlags.FLEET_FIGHT_TO_THE_LAST, true);
+        cataclysm.getMemoryWithoutUpdate().set(MemFlags.MEMORY_KEY_MAKE_PREVENT_DISENGAGE, true);;
         cataclysm.getMemoryWithoutUpdate().set(MemFlags.FLEET_IGNORES_OTHER_FLEETS, true);
         cataclysm.getMemoryWithoutUpdate().set(MemFlags.FLEET_DO_NOT_IGNORE_PLAYER, true);
         
