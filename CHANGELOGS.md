@@ -1,5 +1,6 @@
 SEEKER
 0.67
+  - Finally fix that extremely hard to diagnose invincibility issue on boss warp in.
   - Completely rewrite the boss warp in targetting and location grabbing logic.
   - Prevent plague fleets from retreating, ever.
   - Fix incorrect captain rank on the 'SKR_siegfried' bounty.

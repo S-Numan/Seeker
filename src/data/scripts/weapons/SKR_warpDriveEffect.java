@@ -5,6 +5,9 @@ import com.fs.starfarer.api.combat.*;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.mission.FleetSide;
 import static data.scripts.SKR_modPlugin.bossArrivalSounds;
+
+import com.fs.starfarer.combat.CombatFleetManager;
+import com.fs.starfarer.util.DynamicStats;
 import org.magiclib.util.MagicLensFlare;
 import org.magiclib.util.MagicRender;
 import data.scripts.util.SKR_graphicLibEffects;
@@ -16,6 +19,8 @@ import java.util.WeakHashMap;
 import org.lazywizard.lazylib.MathUtils;
 import org.lazywizard.lazylib.VectorUtils;
 import org.lazywizard.lazylib.combat.CombatUtils;
+
+import static java.lang.Float.NaN;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_COLOR;
 import org.lwjgl.util.vector.Vector2f;
@@ -59,15 +64,20 @@ public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
             }*/
         }
 
-        if (engine.isPaused() || ship.getOriginalOwner() < 0 || !ActiveWarp) return;
+        var hitpoints = ship.getHitpoints();
+        if(Float.isNaN(hitpoints)) {
+            Global.getLogger(this.getClass()).error("Hitpoints of ship '" + ship.getHullSpec().getHullName() + "' is NaN when it should be a number. Removing ship from battle to avoid soft-lock.");
 
-        /*if(!ship.isAlive()) {
-            Global.getLogger(this.getClass()).error("Ship of hull '" + ship.getHullSpec().getHullName() + "' is not alive when it should be alive. Removing ship from combat to prevent further issues");
-            engine.getFleetManager(ship.getOwner()).removeDeployed(ship, false);
             engine.removeEntity(ship);
-            ActiveWarp = false;
+            //engine.getFleetManager(ship.getOwner()).removeDeployed(ship, false);
             return;
-        }*/
+        }
+
+        if (warpState != WarpState.DONE) {
+            ship.getAIFlags().setFlag(ShipwideAIFlags.AIFlags.DO_NOT_USE_SHIELDS, 1f);
+        }
+
+        if (engine.isPaused() || ship.getOriginalOwner() < 0 || !ActiveWarp) return;
 
         //retreating warp out check
         if(ship.isAlive() && ship.isRetreating() && ship.getTravelDrive().isActive() && ship.getTravelDrive().getEffectLevel() >= 0.99f){
@@ -91,7 +101,7 @@ public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
             switch (warpState) {
                 case INITIAL:
                     moveToLocation(ship, new Vector2f(0, DISTANCE), 180, 0);
-                    freeze(ship.getMutableStats());
+                    freeze(ship);
                     warpState = WarpState.SEARCHING;
                     break;
                 case SEARCHING:
@@ -167,7 +177,23 @@ public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
         }
     }
 
-    private void freeze(MutableShipStatsAPI stats){
+    private void enableCollision() {
+        if(ship.isShipWithModules()) {
+            for (ShipAPI m : ship.getChildModulesCopy()) {
+                m.setCollisionClass(CollisionClass.SHIP);
+            }
+        }
+        ship.setCollisionClass(CollisionClass.SHIP);
+    }
+    private void disableCollision() {
+        ship.setCollisionClass(CollisionClass.NONE);
+        for (ShipAPI module : ship.getChildModulesCopy()) {
+            module.setCollisionClass(CollisionClass.NONE);
+        }
+    }
+
+    private void freeze(ShipAPI ship){
+        var stats = ship.getMutableStats();
 
         // Ideally collision would be disabled, but it causes invincibility issues in some cases, even if waiting a tick before and after disabling/enabling.
 
@@ -176,22 +202,37 @@ public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
         stats.getDeceleration().modifyMult(ID, 0);
         stats.getTurnAcceleration().modifyMult(ID, 0);
         stats.getMaxTurnRate().modifyMult(ID, 0);
-        stats.getFluxCapacity().modifyMult(ID, 0);
+        //stats.getFluxCapacity().modifyMult(ID, 0); // NEVER EVER EVER DO THIS. This makes the ship conditionally invulnerable, and steals away many hours of your life as you try to figure out why.
         stats.getFluxDissipation().modifyMult(ID, 0);
         stats.getHullDamageTakenMult().modifyMult(ID, 0);
         stats.getArmorDamageTakenMult().modifyMult(ID, 0);
+
+        // Hard-stop shield if it is currently up.
+        if (ship.getShield() != null && ship.getShield().isOn()) {
+            ship.getShield().toggleOff();
+        }
+        // Tell the AI not to try raising the shields.
+        ship.getAIFlags().setFlag(ShipwideAIFlags.AIFlags.DO_NOT_USE_SHIELDS, 1f);
+
+        disableCollision();
     }
-    private void unfreeze(MutableShipStatsAPI stats){
+    private void unfreeze(ShipAPI ship){
+        var stats = ship.getMutableStats();
 
         stats.getMaxSpeed().unmodify(ID);
         stats.getAcceleration().unmodify(ID);
         stats.getDeceleration().unmodify(ID);
         stats.getTurnAcceleration().unmodify(ID);
         stats.getMaxTurnRate().unmodify(ID);
-        stats.getFluxCapacity().unmodify(ID);
+        //stats.getFluxCapacity().unmodify(ID);
         stats.getFluxDissipation().unmodify(ID);
         stats.getHullDamageTakenMult().unmodify(ID);
         stats.getArmorDamageTakenMult().unmodify(ID);
+
+        // Allow shield use again.
+        ship.getAIFlags().unsetFlag(ShipwideAIFlags.AIFlags.DO_NOT_USE_SHIELDS);
+
+        enableCollision();
     }
     private void moveToLocation(ShipAPI ship, Vector2f targetLoc, float azimuth, float speed) {
         ship.setFacing(azimuth);
@@ -203,10 +244,16 @@ public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
         // Set velocity based on direction
         Vector2f newVel = MathUtils.getPoint(new Vector2f(), speed, azimuth);
         ship.getVelocity().set(newVel);
+
+        if(Float.isNaN(ship.getLocation().x) || Float.isNaN(ship.getLocation().y)) {
+            Global.getLogger(this.getClass()).error("NaN location detected on moveToLocation, setting location to (0,0)");
+            ship.getLocation().set(new Vector2f(0f,0f));
+        }
     }
 
-    private void warpIn(ShipAPI ship){
-        unfreeze(ship.getMutableStats());
+    private void warpIn(ShipAPI ship) {
+
+        unfreeze(ship);
 
         // Face the target (the enemies) on arrival where we have one; otherwise fall back to
         // facing along the direction of travel, e.g. for the no-target fallback warp-in.
@@ -214,6 +261,7 @@ public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
                 VectorUtils.getAngle(ship.getLocation(), warpTo);
 
         moveToLocation(ship, warpTo, facing, 300);
+
         ship.turnOffTravelDrive();
         ship.turnOnTravelDrive(2);
 //        ship.getTravelDrive().forceState(ShipSystemAPI.SystemState.OUT, 1);
@@ -290,7 +338,12 @@ public class SKR_warpDriveEffect implements EveryFrameWeaponEffectPlugin {
         ShipAPI frontShip = getFrontmostFriendlyShip(engine, target);
 
         if (frontShip != null){
-            return pickSpawnAtFormationFront(frontShip, target);
+            Vector2f pos = pickSpawnAtFormationFront(frontShip, target);
+            if(Float.isNaN(pos.x) || Float.isNaN(pos.y)) {
+                Global.getLogger(this.getClass()).error("NaN location detected on findWarpLocation, setting location to (0,0)");
+                return new Vector2f(0f,0f);
+            }
+            return pos;
         }
 
         // No friendlies deployed yet (first ship in) - fall back to the old ahead-of-target placement.
